@@ -10,11 +10,16 @@ import {
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 
+import { CircleUserRound } from "lucide-react"
+
 export default function Login() {
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
             <Card className="w-full max-w-md shadow-lg">
                 <CardHeader className="space-y-3 text-center">
+                    <div className="mx-auto flex h-20 w-20 items-center justify-center">
+                        <CircleUserRound className="h-15 w-15 text-primary" />
+                    </div>
                     <CardTitle className="text-2xl font-bold">
                         Login
                     </CardTitle>
