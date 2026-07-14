@@ -18,7 +18,7 @@ export default function Register() {
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
             <Card className="w-full max-w-md">
-                <CardHeader className="space-y-3 text-center">
+                <CardHeader className="space-y-2 text-center">
 
                     <div className="mx-auto flex h-15 w-15 items-center justify-center">
                         <CircleUserRound className="h-15 w-15 text-primary" />
@@ -35,7 +35,7 @@ export default function Register() {
 
                 <Separator />
 
-                <CardContent className="pt-6">
+                <CardContent className="pt-2">
                     <form className="space-y-5">
 
                         <div className="space-y-2">
@@ -105,7 +105,7 @@ export default function Register() {
                         <Separator className="flex-1" />
                     </div>
 
-                    <p className="mt-6 text-center text-sm text-muted-foreground">
+                    <p className="text-center text-sm text-muted-foreground">
                         Already have an account?
                         <Link to="/login">
                             <Button variant="link" size="sm" className="pl-1 cursor-pointer">

@@ -18,7 +18,7 @@ export default function Login() {
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
             <Card className="w-full max-w-md shadow-lg">
-                <CardHeader className="space-y-3 text-center">
+                <CardHeader className="space-y-2 text-center">
 
                     <div className="mx-auto flex h-15 w-15 items-center justify-center">
                         <CircleUserRound className="h-15 w-15 text-primary" />
@@ -35,7 +35,7 @@ export default function Login() {
 
                 <Separator />
 
-                <CardContent className="pt-6">
+                <CardContent className="pt-2">
                     <form className="space-y-5">
                         <div className="space-y-2">
                             <Label htmlFor="email">
@@ -76,21 +76,33 @@ export default function Login() {
                         </span>
                         <Separator className="flex-1" />
                     </div>
+                    <div className="grid grid-cols-2 gap-3 mt-6 text-center text-sm text-muted-foreground">
+                        <p>
+                            Don't have an account?
+                            <Link to="/register">
+                                <Button variant="link" size="sm" className="block pl-0 mt-1 mx-auto cursor-pointer">
+                                    Create account
+                                </Button>
+                            </Link>
+                        </p>
 
-                    <p className="mt-6 text-center text-sm text-muted-foreground">
-                        Don't have an account?
-                        <Link to="/register">
-                            <Button variant="link" size="sm" className="pl-1 cursor-pointer">
-                                Create account
+                        <p>
+                            Lost your password?
+                            <Link to="/forgotpassword">
+                                <Button variant="link" size="sm" className="block pl-0 mt-1 mx-auto cursor-pointer">
+                                    Forgot password
+                                </Button>
+                            </Link>
+                        </p>
+                    </div>
+
+                    <p className="mt-3 text-center text-sm text-muted-foreground">
+                        Not a Car Owner?
+                        <Link to="/elevatedlogin">
+                            <Button variant="link" size="sm" className="block pl-0 mt-1 mx-auto cursor-pointer">
+                                Elevated Sign in
                             </Button>
                         </Link>
-                    </p>
-                    
-                    <p className="mt-6 text-center text-sm text-muted-foreground">
-                        Lost your password?
-                        <Button variant="link" size="sm" className="pl-1 cursor-pointer">
-                            Forgot password
-                        </Button>
                     </p>
                 </CardContent>
             </Card>
