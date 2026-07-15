@@ -4,6 +4,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 
 import authRoutes from "./routes/auth.routes.js";
+import userRoutes from "./routes/user.routes.js";
 
 dotenv.config();
 
@@ -31,3 +32,4 @@ try {
 
 // routes
 app.use("/auth", authRoutes);
+app.use("/users", userRoutes);

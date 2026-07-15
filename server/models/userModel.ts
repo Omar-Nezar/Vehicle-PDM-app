@@ -12,6 +12,7 @@ export enum UserRole {
 // TypeScript interface
 export interface IUser extends Document {
     _id: Types.ObjectId;
+    name: string;
     email: string;
     password: string;
     role: UserRole;
@@ -22,6 +23,11 @@ export interface IUser extends Document {
 // Mongoose schema
 const UserSchema: Schema<IUser> = new Schema(
     {
+        name: {
+            type: String,
+            required: true,
+            trim: true,
+        },
         email: {
             type: String,
             required: true,
