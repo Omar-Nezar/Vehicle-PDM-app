@@ -3,6 +3,9 @@
     "paths": {
       "@/*": [
         "./@/*"
+      ],
+      "@schemas/*": [
+        "../shared/schemas/*"
       ]
     },
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
