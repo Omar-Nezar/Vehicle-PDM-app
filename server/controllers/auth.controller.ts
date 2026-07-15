@@ -53,7 +53,7 @@ export const registerUser = async (req: Request, res: Response) => {
 // Login
 export const loginUser = async (req: Request, res: Response) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, type } = req.body;
 
     // 1. Basic validation
     if (!email || !password) {

@@ -5,6 +5,7 @@ const API = axios.create({
 });
 
 export interface LoginPayload {
+  type: string;
   email: string;
   password: string;
 }
