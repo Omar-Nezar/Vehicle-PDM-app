@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useForm } from "react-hook-form";
+import { CircleUserRound } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,9 +14,36 @@ import {
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 
-import { CircleUserRound } from "lucide-react"
+import { registerUser } from "../../slices/authSlice";
+import { useAppDispatch } from "../../store/hooks";
 
 export default function Register() {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    type RegisterFormData = {
+        name: string;
+        email: string;
+        password: string;
+        confirmPassword: string;
+    };
+
+    const {
+        register,
+        handleSubmit,
+        watch,
+        formState: { errors, isSubmitting },
+    } = useForm<RegisterFormData>();
+
+    const onSubmit = (data: RegisterFormData) => {
+        dispatch(
+            registerUser({
+                name: data.name,
+                email: data.email,
+                password: data.password,
+            })
+        );
+    };
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
             <Card className="w-full max-w-md">
@@ -36,8 +65,7 @@ export default function Register() {
                 <Separator />
 
                 <CardContent className="pt-2">
-                    <form className="space-y-5">
-
+                    <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
                         <div className="space-y-2">
                             <Label htmlFor="name">
                                 Full Name
@@ -47,7 +75,9 @@ export default function Register() {
                                 id="name"
                                 type="text"
                                 placeholder="Enter your full name"
+                                {...register("name", { required: "Name is required" })}
                             />
+                            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -59,7 +89,9 @@ export default function Register() {
                                 id="email"
                                 type="email"
                                 placeholder="name@example.com"
+                                {...register("email", { required: "Email is required" })}
                             />
+                            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -74,7 +106,9 @@ export default function Register() {
                                 id="password"
                                 type="password"
                                 placeholder="Enter your password"
+                                {...register("password", { required: "Password is required" })}
                             />
+                            {errors.password && <p className="text-red-500">{errors.password.message}</p>}
                         </div>
 
                         <div className="space-y-2">
@@ -85,14 +119,18 @@ export default function Register() {
 
                             </div>
 
-                            <Input
-                                id="confirmPassword"
-                                type="password"
-                                placeholder="Retype your password"
-                            />
+                            <div>
+                                <Input
+                                    id="confirmPassword"
+                                    type="password"
+                                    placeholder="Retype your password"
+                                    {...register("confirmPassword", { required: "Please confirm your password" })}
+                                />
+                                {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
+                            </div>
                         </div>
 
-                        <Button className="w-full h-11 cursor-pointer">
+                        <Button className="w-full h-11 cursor-pointer" type="submit" disabled={isSubmitting}>
                             Create Account
                         </Button>
                     </form>
