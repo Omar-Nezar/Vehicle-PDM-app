@@ -1,4 +1,6 @@
-import { Link } from "react-router-dom"
+import { Link, useNavigate } from "react-router-dom"
+import { useState } from "react";
+import { CircleUserRound } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -12,9 +14,36 @@ import {
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
 
-import { CircleUserRound } from "lucide-react"
+import { loginUser } from "../../slices/authSlice";
+import type { RootState, AppDispatch } from "../../store/store";
+import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 export default function Login() {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    const { loading, error, user } = useAppSelector(
+        (state: RootState) => state.auth
+    );
+
+    const [form, setForm] = useState({
+        email: "",
+        password: "",
+    });
+
+    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+        e.preventDefault();
+        dispatch(loginUser(form)).unwrap()
+            .then((res) => {
+                if (res && res.user) {
+                    navigate("/carownerhome");
+                }
+            })
+            .catch((err) => {
+                console.error("Login failed:", err);
+            })
+    };
+
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
             <Card className="w-full max-w-md shadow-lg">
@@ -36,7 +65,7 @@ export default function Login() {
                 <Separator />
 
                 <CardContent className="pt-2">
-                    <form className="space-y-5">
+                    <form className="space-y-5" onSubmit={handleSubmit}>
                         <div className="space-y-2">
                             <Label htmlFor="email">
                                 Email
@@ -46,6 +75,10 @@ export default function Login() {
                                 id="email"
                                 type="email"
                                 placeholder="name@example.com"
+                                value={form.email}
+                                onChange={(e) =>
+                                    setForm({ ...form, email: e.target.value })
+                                }
                             />
                         </div>
 
@@ -61,10 +94,14 @@ export default function Login() {
                                 id="password"
                                 type="password"
                                 placeholder="Enter your password"
+                                value={form.password}
+                                onChange={(e) =>
+                                    setForm({ ...form, password: e.target.value })
+                                }
                             />
                         </div>
 
-                        <Button className="w-full h-11 cursor-pointer">
+                        <Button className="w-full h-11 cursor-pointer" type="submit" disabled={loading}>
                             Sign in
                         </Button>
                     </form>
@@ -76,6 +113,11 @@ export default function Login() {
                         </span>
                         <Separator className="flex-1" />
                     </div>
+                    {error && (
+                        <p className="text-red-500 text-center">
+                            {error}
+                        </p>
+                    )}
                     <div className="grid grid-cols-2 gap-3 mt-6 text-center text-sm text-muted-foreground">
                         <p>
                             Don't have an account?
