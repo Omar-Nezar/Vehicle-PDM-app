@@ -1,6 +1,7 @@
 import { Link, useNavigate } from "react-router-dom"
 import { useForm } from "react-hook-form";
 import { CircleUserRound } from "lucide-react"
+import { zodResolver } from "@hookform/resolvers/zod";
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -13,9 +14,11 @@ import {
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
+import { toast } from "sonner";
 
 import { registerUser } from "../../slices/authSlice";
 import { useAppDispatch } from "../../store/hooks";
+import { registerSchema } from "@schemas/user.schema";
 
 export default function Register() {
     const dispatch = useAppDispatch();
@@ -31,18 +34,28 @@ export default function Register() {
     const {
         register,
         handleSubmit,
-        watch,
         formState: { errors, isSubmitting },
-    } = useForm<RegisterFormData>();
+    } = useForm<RegisterFormData>({
+        resolver: zodResolver(registerSchema),
+    });
 
     const onSubmit = (data: RegisterFormData) => {
-        dispatch(
+        const promise = dispatch(
             registerUser({
                 name: data.name,
                 email: data.email,
                 password: data.password,
             })
-        );
+        ).unwrap();
+        toast.promise(promise, {
+            loading: "Registering...",
+            success: () => {
+                navigate("/login");
+                return "Registration successful!";
+            },
+            error: () =>
+                "Registration failed!",
+        });
     };
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
@@ -75,9 +88,16 @@ export default function Register() {
                                 id="name"
                                 type="text"
                                 placeholder="Enter your full name"
-                                {...register("name", { required: "Name is required" })}
+                                {...register("name")}
                             />
-                            {errors.name && <p className="text-red-500">{errors.name.message}</p>}
+                            <div
+                                className={`overflow-hidden transition-all duration-400 ease-in-out 
+                                    ${errors.name
+                                        ? "max-h-10 opacity-100 mb-1"
+                                        : "max-h-0 opacity-0"}`}
+                            >
+                                <p className="text-red-500 text-sm">{errors.name?.message}</p>
+                            </div>
                         </div>
 
                         <div className="space-y-2">
@@ -89,9 +109,16 @@ export default function Register() {
                                 id="email"
                                 type="email"
                                 placeholder="name@example.com"
-                                {...register("email", { required: "Email is required" })}
+                                {...register("email")}
                             />
-                            {errors.email && <p className="text-red-500">{errors.email.message}</p>}
+                            <div
+                                className={`overflow-hidden transition-all duration-400 ease-in-out 
+                                    ${errors.email
+                                        ? "max-h-10 opacity-100 mb-1"
+                                        : "max-h-0 opacity-0"}`}
+                            >
+                                <p className="text-red-500 text-sm">{errors.email?.message}</p>
+                            </div>
                         </div>
 
                         <div className="space-y-2">
@@ -106,9 +133,16 @@ export default function Register() {
                                 id="password"
                                 type="password"
                                 placeholder="Enter your password"
-                                {...register("password", { required: "Password is required" })}
+                                {...register("password")}
                             />
-                            {errors.password && <p className="text-red-500">{errors.password.message}</p>}
+                            <div
+                                className={`overflow-hidden transition-all duration-400 ease-in-out 
+                                    ${errors.password
+                                        ? "max-h-10 opacity-100 mb-1"
+                                        : "max-h-0 opacity-0"}`}
+                            >
+                                <p className="text-red-500 text-sm">{errors.password?.message}</p>
+                            </div>
                         </div>
 
                         <div className="space-y-2">
@@ -124,9 +158,16 @@ export default function Register() {
                                     id="confirmPassword"
                                     type="password"
                                     placeholder="Retype your password"
-                                    {...register("confirmPassword", { required: "Please confirm your password" })}
+                                    {...register("confirmPassword")}
                                 />
-                                {errors.confirmPassword && <p className="text-red-500">{errors.confirmPassword.message}</p>}
+                                <div
+                                    className={`overflow-hidden transition-all duration-400 ease-in-out 
+                                        ${errors.confirmPassword
+                                            ? "max-h-10 opacity-100 mt-1"
+                                            : "max-h-0 opacity-0"}`}
+                                >
+                                    <p className="text-red-500 text-sm">{errors.confirmPassword?.message}</p>
+                                </div>
                             </div>
                         </div>
 
