@@ -5,9 +5,9 @@ import Login from './pages/common/Login'
 import Register from './pages/car_owner/Register'
 import ForgotPassword from './pages/common/ForgotPassword'
 import CarOwnerHome from './pages/car_owner/carOwnerHome'
+import ThemeButton from './theme'
 
 function App() {
-
   return (
     <>
       <Routes>
@@ -19,8 +19,9 @@ function App() {
         <Route path="/carownerhome" element={<CarOwnerHome />} />
       </Routes>
       <Toaster richColors position="top-right" />
+      <ThemeButton />
     </>
   )
 }
 
-export default App
+export default App;
