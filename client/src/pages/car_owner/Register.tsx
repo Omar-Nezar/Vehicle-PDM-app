@@ -49,9 +49,14 @@ export default function Register() {
         ).unwrap();
         toast.promise(promise, {
             loading: "Registering...",
-            success: () => {
-                navigate("/login");
-                return "Registration successful!";
+            success: (data) => {
+                localStorage.setItem("token", data.token);
+                navigate("/carownerhome");
+                return {
+                    message: "Registration successful!",
+                    description: "We have logged you in automatically.",
+                    action: toast.dismiss()
+                };
             },
             error: () =>
                 "Registration failed!",
