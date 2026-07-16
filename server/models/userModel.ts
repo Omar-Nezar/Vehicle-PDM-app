@@ -2,8 +2,8 @@ import mongoose, { Document, Schema, Types } from "mongoose";
 import { hashPassword } from "../utils/hash.js";
 
 
-// Allowed user roles
-export enum UserRole {
+// Allowed user types
+export enum UserType {
     CAR_OWNER = "car_owner",
     ADMIN = "admin",
     INVENTORY_MANAGER = "inventory_manager",
@@ -15,7 +15,7 @@ export interface IUser extends Document {
     name: string;
     email: string;
     password: string;
-    role: UserRole;
+    type: UserType;
     createdAt: Date;
     updatedAt: Date;
 }
@@ -40,10 +40,10 @@ const UserSchema: Schema<IUser> = new Schema(
             required: true,
             minlength: 8,
         },
-        role: {
+        type: {
             type: String,
-            enum: Object.values(UserRole),
-            default: UserRole.CAR_OWNER,
+            enum: Object.values(UserType),
+            default: UserType.CAR_OWNER,
         },
     },
     {

@@ -23,14 +23,14 @@ import { Separator } from "@/components/ui/separator"
 import { toast } from "sonner"
 
 import { loginUser } from "../../slices/authSlice";
-import type { RootState } from "../../store/store";
+import { type RootState } from "../../store/store";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 
 export default function Login() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const { loading, error, user } = useAppSelector(
+    const { loading, error, token } = useAppSelector(
         (state: RootState) => state.auth
     );
 
@@ -47,9 +47,15 @@ export default function Login() {
 
         toast.promise(promise, {
             loading: "Logging in...",
-            success: () => {
+            success: (data) => {
+                localStorage.setItem("token", data.token);
                 navigate("/carownerhome");
-                return "Welcome!";
+                return {
+                    message: "Login successful!",
+                    description: "You have logged in successfully.",
+                    duration: 10000,
+                    action: toast.dismiss()
+                };
             },
             error: () =>
                 "Login failed!",
@@ -149,7 +155,7 @@ export default function Login() {
                         </span>
                         <Separator className="flex-1" />
                     </div>
-                    
+
                     <div className="grid grid-cols-2 gap-3 mt-6 text-center text-sm text-muted-foreground">
                         <p>
                             Don't have an account?

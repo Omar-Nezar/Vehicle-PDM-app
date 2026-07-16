@@ -7,13 +7,13 @@ import {
 } from "./api/authApi";
 
 interface AuthState {
-    user: any;
+    token: any;
     loading: boolean;
     error: string | null;
 }
 
 const initialState: AuthState = {
-    user: null,
+    token: null,
     loading: false,
     error: null,
 };
@@ -50,7 +50,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         logout: (state) => {
-            state.user = null;
+            state.token = null;
         },
     },
     extraReducers: (builder) => {
@@ -62,7 +62,7 @@ const authSlice = createSlice({
             })
             .addCase(loginUser.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload.user;
+                state.token = action.payload.token;
             })
             .addCase(loginUser.rejected, (state, action: any) => {
                 state.loading = false;
@@ -76,7 +76,7 @@ const authSlice = createSlice({
             })
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.loading = false;
-                state.user = action.payload.user;
+                state.token = action.payload.token;
             })
             .addCase(registerUser.rejected, (state, action: any) => {
                 state.loading = false;

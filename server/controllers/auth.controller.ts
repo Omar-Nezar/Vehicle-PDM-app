@@ -2,11 +2,12 @@ import { type Request, type Response } from "express";
 
 import userModel from "../models/userModel.js";
 import { comparePassword } from "../utils/hash.js"
+import { generateToken } from "../utils/generate_token.js";
 
 // Register
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, role } = req.body;
+    const { name, email, password, type } = req.body;
 
     // 1. Basic validation
     if (!name || !email || !password) {
@@ -29,17 +30,20 @@ export const registerUser = async (req: Request, res: Response) => {
       name,
       email,
       password: password,
-      role, // optional (defaults if not provided)
+      type, // optional (defaults if not provided)
     });
 
-    // 5. Remove password from response
-    const userObj = user.toObject();
-    const { password: _password, ...userWithoutPassword } = userObj;
+    // 5. Create token
+    const token = generateToken({
+      userId: user._id.toString(),
+      email: user.email,
+      type: user.type,
+    });
 
     // 6. Return success response
     return res.status(201).json({
       message: "Registration successful",
-      user: userWithoutPassword,
+      token,
     });
   } catch (error) {
     console.error(error);
@@ -77,14 +81,17 @@ export const loginUser = async (req: Request, res: Response) => {
       });
     }
 
-    // 5. Remove password from response
-    const userObj = user.toObject();
-    const { password: _password, ...userWithoutPassword } = userObj;
+    // 5. Create token
+    const token = generateToken({
+      userId: user._id.toString(),
+      email: user.email,
+      type: user.type,
+    });
 
     // 6. Return success response
     return res.status(200).json({
       message: "Login successful",
-      user: userWithoutPassword,
+      token,
     });
   } catch (error) {
     console.error(error);
