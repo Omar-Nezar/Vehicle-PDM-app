@@ -12,6 +12,8 @@ import CarOwnerHome from './pages/car_owner/carOwnerHome'
 
 // Admin
 import AdminHome from './pages/admin/AdminHome'
+import ManageUsers from './pages/admin/ManageUsers'
+
 function App() {
   return (
     <>
@@ -26,6 +28,7 @@ function App() {
 
         {/* Admin Routes */}
         <Route path="/adminhome" element={<AdminHome />} />
+        <Route path="/manageUsers" element={<ManageUsers />} />
       </Routes>
       <Toaster richColors position="top-right" />
       <ThemeButton />
