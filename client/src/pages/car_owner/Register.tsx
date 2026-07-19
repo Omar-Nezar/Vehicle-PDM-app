@@ -40,13 +40,13 @@ export default function Register() {
     });
 
     const onSubmit = (data: RegisterFormData) => {
-        const promise = dispatch(
-            registerUser({
-                name: data.name,
-                email: data.email,
-                password: data.password,
-            })
-        ).unwrap();
+        const promise = dispatch(registerUser({
+            name: data.name,
+            email: data.email,
+            password: data.password,
+            confirmPassword: data.confirmPassword
+        })).unwrap();
+
         toast.promise(promise, {
             loading: "Registering...",
             success: (data) => {

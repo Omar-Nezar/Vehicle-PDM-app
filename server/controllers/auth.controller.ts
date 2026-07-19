@@ -3,18 +3,21 @@ import { type Request, type Response } from "express";
 import userModel from "../models/userModel.js";
 import { comparePassword } from "../utils/hash.js"
 import { generateToken } from "../utils/generate_token.js";
+import { registerSchema } from "@shared/schemas/user.schema.js";
 
 // Register
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    const { name, email, password, type } = req.body;
+    // 1. Validate input
+    const parsed = registerSchema.safeParse(req.body);
 
-    // 1. Basic validation
-    if (!name || !email || !password) {
+    if (!parsed.success) {
       return res.status(400).json({
-        message: "Name, email and password are required",
+        errors: parsed.error.issues,
       });
     }
+
+    const { name, email, password, type } = req.body;
 
     // 2. Check if user already exists
     const existingUser = await userModel.findOne({ email });
