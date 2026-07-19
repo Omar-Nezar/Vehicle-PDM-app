@@ -12,12 +12,6 @@ interface AuthState {
     error: string | null;
 }
 
-const initialState: AuthState = {
-    token: null,
-    loading: false,
-    error: null,
-};
-
 // async thunk
 export const loginUser = createAsyncThunk(
     "auth/login",
@@ -44,6 +38,12 @@ export const registerUser = createAsyncThunk(
         }
     }
 );
+
+const initialState: AuthState = {
+    token: null,
+    loading: false,
+    error: null,
+};
 
 const authSlice = createSlice({
     name: "auth",
