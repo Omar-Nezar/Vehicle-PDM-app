@@ -1,4 +1,5 @@
 {
+  "type": "module",
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
     "zod": "^4.4.3"
