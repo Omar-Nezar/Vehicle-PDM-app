@@ -1,10 +1,26 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { getUsers } from "../../slices/userSlice";
+import { delUser, getUsers } from "../../slices/userSlice";
+import AdminLayout from "./AdminLayout"
+import getUserBadge from "../../functions/admin/getBadge";
+import { Trash2 } from "lucide-react";
+import { toast } from "sonner"
+
+import { Badge } from "@/components/ui/badge"
+import {
+  Table,
+  TableBody,
+  TableCaption,
+  TableCell,
+  TableFooter,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
 
 export default function ManageUsers() {
   const dispatch = useAppDispatch();
-  const { users, loading, error } = useAppSelector(
+  const { users, loading, delLoading, error } = useAppSelector(
     (state) => state.user
   );
 
@@ -12,8 +28,31 @@ export default function ManageUsers() {
     dispatch(getUsers());
   }, [dispatch]);
 
+
+  const handleDelete = async (_id: string) => {
+    try {
+      const promise = dispatch(delUser(_id)).unwrap();
+
+      toast.promise(promise, {
+        loading: "Deleting...",
+        success: () => {
+          return {
+            message: "Login successful!",
+            description: "You have logged in successfully.",
+            duration: 10000,
+            action: toast.dismiss()
+          };
+        },
+        error: () =>
+          "Deletion failed!",
+      });
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
   return (
-    <div className="p-6 bg-background min-h-screen">
+    <AdminLayout>
       <h1 className="text-2xl font-semibold text-foreground mb-6">
         Manage Users
       </h1>
@@ -28,40 +67,54 @@ export default function ManageUsers() {
         )}
 
         {!loading && !error && (
-          <table className="w-full text-sm">
-            <thead className="bg-muted">
-              <tr className="text-left">
-                <th className="p-3 text-muted-foreground">Name</th>
-                <th className="p-3 text-muted-foreground">Email</th>
-                <th className="p-3 text-muted-foreground">Role</th>
-              </tr>
-            </thead>
+          <Table className="w-full text-sm">
+            <TableHeader className="bg-muted">
+              <TableRow className="text-left">
+                <TableHead className="p-3 text-foreground">Name</TableHead>
+                <TableHead className="p-3 text-foreground">Email</TableHead>
+                <TableHead className="p-3 text-foreground">Role</TableHead>
+                <TableHead className="p-3 text-foreground">Actions</TableHead>
+              </TableRow>
+            </TableHeader>
 
-            <tbody>
-              {users.map((user) => (
-                <tr
-                  key={user._id}
-                  className="border-t border-border hover:bg-muted/50 transition"
-                >
-                  <td className="p-3 text-foreground">
-                    {user.name}
-                  </td>
+            <TableBody>
+              {users.map((user) => {
+                const badge = getUserBadge(user.type);
 
-                  <td className="p-3 text-muted-foreground">
-                    {user.email}
-                  </td>
+                return (
+                  <TableRow
+                    key={user._id}
+                    className="border-t border-border hover:bg-muted/50 transition"
+                  >
+                    <TableCell className="p-3 text-foreground">
+                      {user.name}
+                    </TableCell>
 
-                  <td className="p-3">
-                    <span className="px-2 py-1 rounded text-xs bg-secondary text-secondary-foreground">
-                      {user.type}
-                    </span>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+                    <TableCell className="p-3 text-muted-foreground">
+                      {user.email}
+                    </TableCell>
+
+                    <TableCell className="p-3">
+                      <Badge className={`px-2 py-1 rounded text-xs ${badge.className}`}>
+                        {badge.label}
+                      </Badge>
+                    </TableCell>
+
+                    <TableCell className="p-3 text-right">
+                      <button
+                        onClick={() => handleDelete(user._id)}
+                        className="p-2 rounded-md hover:bg-destructive/10 text-destructive"
+                      >
+                        <Trash2 className="w-4 h-4" />
+                      </button>
+                    </TableCell>
+                  </TableRow>
+                );
+              })}
+            </TableBody>
+          </Table>
         )}
       </div>
-    </div>
+    </AdminLayout>
   );
 }

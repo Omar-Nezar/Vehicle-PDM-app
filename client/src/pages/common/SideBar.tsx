@@ -1,44 +1,65 @@
-import { Link } from "react-router-dom"
+import {
+    Sidebar,
+    SidebarContent,
+    SidebarGroup,
+    SidebarGroupLabel,
+    SidebarGroupContent,
+    SidebarMenu,
+    SidebarMenuItem,
+    SidebarMenuButton,
+    SidebarRail,
+} from "@/components/ui/sidebar";
+import { Home, Users } from "lucide-react";
+import { NavLink } from "react-router-dom";
 
-type Props = {
-    open: boolean;
-    onClose: () => void;
-};
-
-export default function Sidebar({ open, onClose }: Props) {
+export default function AppSidebar() {
     return (
-        <>
-            {/* Overlay */}
-            {open && (
-                <div
-                    onClick={onClose}
-                    className="fixed inset-0 bg-black/30 z-40"
-                />
-            )}
+        <Sidebar collapsible="icon">
+            <SidebarContent>
+                <SidebarGroup>
+                    <SidebarGroupLabel>Admin</SidebarGroupLabel>
 
-            {/* Sidebar */}
-            <aside
-                className={`fixed z-50 top-0 left-0 h-full w-64 bg-popover shadow transform transition-transform duration-300
-        ${open ? "translate-x-0" : "-translate-x-full"}`}
-            >
-                <div className="p-4 border-b font-semibold">
-                    Menu
-                </div>
+                    <SidebarGroupContent>
+                        <SidebarMenu>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild className="rounded-2xl">
+                                    <NavLink
+                                        to="/adminhome"
+                                        className={({ isActive }) =>
+                                            `flex items-center gap-2 py-3 w-full h-full rounded-2xl ${isActive
+                                                ? "bg-accent text-accent-foreground"
+                                                : "text-muted-foreground"
+                                            }`
+                                        }
+                                    >
+                                        <Home className="w-4 h-4" />
+                                        <span>Dashboard</span>
+                                    </NavLink>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
 
-                <nav className="p-4 space-y-2">
-                    <a className="block p-2 rounded hover:bg-gray-100 cursor-pointer">
-                        Dashboard
-                    </a>
-                    <Link to="/manageusers">
-                        <a className="block p-2 rounded hover:bg-gray-100 cursor-pointer">
-                            Users
-                        </a>
-                    </Link>
-                    <a className="block p-2 rounded hover:bg-gray-100 cursor-pointer">
-                        Inventory
-                    </a>
-                </nav>
-            </aside>
-        </>
+                            <SidebarMenuItem>
+                                <SidebarMenuButton asChild className="rounded-2xl">
+                                    <NavLink
+                                        to="/manageusers"
+                                        className={({ isActive }) =>
+                                            `flex items-center gap-2 py-3 w-full h-full rounded-2xl ${isActive
+                                                ? "bg-accent text-accent-foreground"
+                                                : "text-muted-foreground"
+                                            }`
+                                        }
+                                    >
+                                        <Users className="w-4 h-4" />
+                                        <span>Manage Users</span>
+                                    </NavLink>
+                                </SidebarMenuButton>
+                            </SidebarMenuItem>
+                        </SidebarMenu>
+                    </SidebarGroupContent>
+                </SidebarGroup>
+            </SidebarContent>
+
+            <SidebarRail />
+        </Sidebar>
     );
 }

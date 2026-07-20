@@ -1,16 +1,9 @@
-import { useState } from "react";
-import Header from "../common/Header";
-import Sidebar from "../common/SideBar";
+import AdminLayout from "./AdminLayout";
 
 export default function AdminHome() {
-  const [open, setOpen] = useState(false);
-
   return (
-    <div className="h-screen flex flex-col bg-background">
-      <Header onMenuClick={() => setOpen(true)} />
-
+    <AdminLayout>
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar open={open} onClose={() => setOpen(false)} />
 
         <main className="flex-1 p-6">
           <h1 className="text-2xl font-semibold">
@@ -18,6 +11,6 @@ export default function AdminHome() {
           </h1>
         </main>
       </div>
-    </div>
+    </AdminLayout>
   );
 }
