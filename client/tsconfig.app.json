@@ -1,5 +1,7 @@
 {
   "compilerOptions": {
+    "baseUrl": ".",
+    "ignoreDeprecations": "6.0",
     "paths": {
       "@/*": [
         "./@/*"
@@ -35,6 +37,7 @@
   },
   "include": [
     "src",
+    "@",
     "src/store/store.ts"
   ]
 }
