@@ -88,7 +88,15 @@ export default function Login() {
                             <Label className="mb-2" htmlFor="userType">
                                 User Type
                             </Label>
-                            <Select id="userType" value={form.type} onValueChange={(value) => setForm({ ...form, type: value })}>
+                            <Select
+                                id="userType"
+                                value={form.type}
+                                onValueChange={(value) => {
+                                    if (value !== null) {
+                                        setForm({ ...form, type: value });
+                                    }
+                                }}
+                            >
                                 <SelectTrigger className="w-full">
                                     <SelectValue>
                                         {
