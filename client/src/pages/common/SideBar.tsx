@@ -22,7 +22,7 @@ export default function AppSidebar() {
                     <SidebarGroupContent>
                         <SidebarMenu>
                             <SidebarMenuItem>
-                                <SidebarMenuButton asChild className="rounded-2xl">
+                                <SidebarMenuButton className="rounded-2xl">
                                     <NavLink
                                         to="/adminhome"
                                         className={({ isActive }) =>
@@ -39,7 +39,7 @@ export default function AppSidebar() {
                             </SidebarMenuItem>
 
                             <SidebarMenuItem>
-                                <SidebarMenuButton asChild className="rounded-2xl">
+                                <SidebarMenuButton className="rounded-2xl">
                                     <NavLink
                                         to="/manageusers"
                                         className={({ isActive }) =>
