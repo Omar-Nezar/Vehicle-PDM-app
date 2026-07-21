@@ -5,12 +5,12 @@ import { delUserRequest } from "./api/userApi";
 
 export const delUser = createAsyncThunk(
     "users/delUser",
-    async (data: string, thunkAPI) => {
+    async (_id: string, thunkAPI) => {
         try {
-            return await delUserRequest(data)
+            return await delUserRequest(_id)
         } catch (err: any) {
             return thunkAPI.rejectWithValue(
-                err.response?.data?.message || "User Fetch Failed"
+                err.response?.data?.message || "User Deletion Failed"
             );
         }
     }
@@ -74,7 +74,7 @@ const userSlice = createSlice({
                 state.delLoading = true;
                 state.error = null;
             })
-            .addCase(delUser.fulfilled, (state, action) => {
+            .addCase(delUser.fulfilled, (state) => {
                 state.delLoading = false;
             })
             .addCase(delUser.rejected, (state, action) => {

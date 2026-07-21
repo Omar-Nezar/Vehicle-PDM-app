@@ -6,6 +6,6 @@ export const getUsersRequest = async () => {
 };
 
 export const delUserRequest = async (_id: string) => {
-  const res = await API.delete(`/user/deleteuser/${_id}`)
+  const res = await API.delete(`/user/deluser/${_id}`)
   return res.data
 }
