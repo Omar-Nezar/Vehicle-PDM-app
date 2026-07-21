@@ -84,7 +84,7 @@ export default function ManageUsers() {
                     </TableCell>
 
                     <TableCell className="p-3">
-                      <Badge className={`px-2 py-1 rounded text-xs ${badge.className}`}>
+                      <Badge className={`w-25 px-2 py-1 rounded text-xs ${badge.className}`}>
                         {badge.label}
                       </Badge>
                     </TableCell>
