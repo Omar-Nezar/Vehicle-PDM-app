@@ -12,12 +12,16 @@ interface AuthState {
     error: string | null;
 }
 
-// async thunk
 export const loginUser = createAsyncThunk(
     "auth/login",
     async (data: LoginPayload, thunkAPI) => {
         try {
-            return await loginRequest(data);
+
+            const res = await loginRequest(data)
+            const token  = res.token;
+            localStorage.setItem("authToken", token);
+            return res;
+
         } catch (err: any) {
             return thunkAPI.rejectWithValue(
                 err.response?.data?.message || "Login failed"
@@ -30,7 +34,10 @@ export const registerUser = createAsyncThunk(
     "auth/register",
     async (data: RegisterPayload, thunkAPI) => {
         try {
-            return await registerRequest(data);
+            const res = await registerRequest(data);
+            const token = res.token
+            localStorage.setItem("authToken", token);
+            return res;
         } catch (err: any) {
             return thunkAPI.rejectWithValue(
                 err.response?.data?.message || "Registration failed"
@@ -40,7 +47,7 @@ export const registerUser = createAsyncThunk(
 );
 
 const initialState: AuthState = {
-    token: null,
+    token: localStorage.getItem("authToken"),
     loading: false,
     error: null,
 };

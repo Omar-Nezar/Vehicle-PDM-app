@@ -38,7 +38,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
     // 5. Create token
     const token = generateToken({
-      userId: user._id.toString(),
+      _id: user._id.toString(),
       email: user.email,
       type: user.type,
     });
@@ -69,7 +69,7 @@ export const loginUser = async (req: Request, res: Response) => {
       });
     }
     // 2. Check if user exists
-    const user = await userModel.findOne({ email });
+    const user = await userModel.findOne({ email, type });
     if (!user) {
       return res.status(400).json({
         message: "Invalid credentials",
@@ -86,7 +86,7 @@ export const loginUser = async (req: Request, res: Response) => {
 
     // 5. Create token
     const token = generateToken({
-      userId: user._id.toString(),
+      _id: user._id.toString(),
       email: user.email,
       type: user.type,
     });
