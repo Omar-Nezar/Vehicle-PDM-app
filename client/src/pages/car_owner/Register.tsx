@@ -14,11 +14,11 @@ import {
 } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { toast } from "sonner";
 
 import { registerUser } from "../../slices/authSlice";
 import { useAppDispatch } from "../../store/hooks";
 import { registerSchema } from "@schemas/user.schema";
+import showToast from "../common/Toast";
 
 export default function Register() {
     const dispatch = useAppDispatch();
@@ -39,7 +39,7 @@ export default function Register() {
         resolver: zodResolver(registerSchema),
     });
 
-    const onSubmit = (data: RegisterFormData) => {
+    const onSubmit = async (data: RegisterFormData) => {
         const promise = dispatch(registerUser({
             name: data.name,
             email: data.email,
@@ -47,20 +47,10 @@ export default function Register() {
             confirmPassword: data.confirmPassword
         })).unwrap();
 
-        toast.promise(promise, {
-            loading: "Registering...",
-            success: (data) => {
-                localStorage.setItem("token", data.token);
-                navigate("/carownerhome");
-                return {
-                    message: "Registration successful!",
-                    description: "We have logged you in automatically.",
-                    action: toast.dismiss()
-                };
-            },
-            error: () =>
-                "Registration failed!",
-        });
+        showToast({ promise, message: "Registration Successful", description: "You have been logged in automatically" })
+
+        await promise
+        navigate("/carownerhome")
     };
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">

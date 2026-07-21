@@ -3,9 +3,11 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { delUser, getUsers } from "../../slices/userSlice";
 import AdminLayout from "./AdminLayout"
 import getUserBadge from "../../functions/admin/getBadge";
-import { Trash2 } from "lucide-react";
-import { toast } from "sonner"
+import Toast from "../common/Toast"
 
+import { Trash2 } from "lucide-react";
+
+import { Spinner } from "@/components/ui/spinner";
 import { Badge } from "@/components/ui/badge"
 import {
   Table,
@@ -32,20 +34,7 @@ export default function ManageUsers() {
   const handleDelete = async (_id: string) => {
     try {
       const promise = dispatch(delUser(_id)).unwrap();
-
-      toast.promise(promise, {
-        loading: "Deleting...",
-        success: () => {
-          return {
-            message: "Login successful!",
-            description: "You have logged in successfully.",
-            duration: 10000,
-            action: toast.dismiss()
-          };
-        },
-        error: () =>
-          "Deletion failed!",
-      });
+      Toast({ promise, message: "User Deleted Successfully", description: `User ${_id} Deleted` })
     } catch (err) {
       console.error(err);
     }
@@ -101,12 +90,18 @@ export default function ManageUsers() {
                     </TableCell>
 
                     <TableCell className="p-3 text-right">
-                      <button
+                      <Badge
+                        variant="destructive"
                         onClick={() => handleDelete(user._id)}
-                        className="p-2 rounded-md hover:bg-destructive/10 text-destructive"
+                        className="px-2 py-1 cursor-pointer hover:bg-destructive/40 dark:hover:bg-destructive/40"
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
+                        {
+                          !delLoading
+                            ? <Trash2 className="w-4 h-4" data-icon="inline-start" />
+                            : <Spinner data-icon="inline-start" />
+                        }
+                        <span>Delete</span>
+                      </Badge>
                     </TableCell>
                   </TableRow>
                 );

@@ -20,11 +20,11 @@ import {
 } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Separator } from "@/components/ui/separator"
-import { toast } from "sonner"
 
 import { loginUser } from "../../slices/authSlice";
 import { type RootState } from "../../store/store";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
+import showToast from "../common/Toast"
 
 export default function Login() {
     const dispatch = useAppDispatch();
@@ -40,26 +40,18 @@ export default function Login() {
         password: "",
     });
 
-    const handleSubmit = (e: React.SubmitEvent<HTMLFormElement>) => {
+    const handleSubmit = async (e: React.SubmitEvent<HTMLFormElement>) => {
         e.preventDefault();
+        if (form.email && form.password) {
+            const promise = dispatch(loginUser(form)).unwrap();
+            showToast({ promise, message: "Login Successful!", description: "You have logged in" })
 
-        const promise = dispatch(loginUser(form)).unwrap();
+            await promise;
+            navigate("/carownerhome");
+        } else {
+            showToast({ message: "Login aborted", description: "Please fill required details" })
+        }
 
-        toast.promise(promise, {
-            loading: "Logging in...",
-            success: (data) => {
-                localStorage.setItem("token", data.token);
-                navigate("/carownerhome");
-                return {
-                    message: "Login successful!",
-                    description: "You have logged in successfully.",
-                    duration: 10000,
-                    action: toast.dismiss()
-                };
-            },
-            error: () =>
-                "Login failed!",
-        });
     };
 
     return (
