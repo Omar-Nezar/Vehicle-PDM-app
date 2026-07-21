@@ -25,6 +25,7 @@ import { loginUser } from "../../slices/authSlice";
 import { type RootState } from "../../store/store";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import showToast from "../common/Toast"
+import determineHome from "../../functions/utility/determineHome";
 
 export default function Login() {
     const dispatch = useAppDispatch();
@@ -47,7 +48,7 @@ export default function Login() {
             showToast({ promise, message: "Login Successful!", description: "You have logged in" })
 
             await promise;
-            navigate("/carownerhome");
+            navigate(determineHome());
         } else {
             showToast({ message: "Login aborted", description: "Please fill required details" })
         }
