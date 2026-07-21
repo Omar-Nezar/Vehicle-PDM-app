@@ -74,8 +74,11 @@ const userSlice = createSlice({
                 state.delLoading = true;
                 state.error = null;
             })
-            .addCase(delUser.fulfilled, (state) => {
+            .addCase(delUser.fulfilled, (state, action) => {
                 state.delLoading = false;
+                state.users = state.users.filter(
+                    (user) => user._id !== action.meta.arg
+                );
             })
             .addCase(delUser.rejected, (state, action) => {
                 state.delLoading = false;
