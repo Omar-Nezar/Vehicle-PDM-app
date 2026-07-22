@@ -8,10 +8,14 @@ export default defineConfig({
     react(),
     tailwindcss()
   ],
+  server: {
+    port: 5173,
+  },
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./@"),
-      "@schemas": path.resolve(__dirname, "../shared/schemas")
+      "@schemas": path.resolve(__dirname, "../shared/schemas"),
+      "src": path.resolve(__dirname, "./src"),
     }
   }
 })
