@@ -1,7 +1,7 @@
-import decodeToken from "./decodeToken";
+import getUserType from "./getUserType";
 
 export default function determineHome(type?: string) {
-    const uType = type ?? decodeToken()?.type
+    const uType = type ?? getUserType()
     switch (uType) {
         case "car_owner": return "/carownerhome";
         case "admin": return "/adminhome";
