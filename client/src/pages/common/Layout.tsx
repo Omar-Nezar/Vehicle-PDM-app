@@ -5,21 +5,22 @@ import {
   SidebarTrigger,
 } from "@/components/ui/sidebar";
 
-import SideBar from "../common/SideBar";
+import SideBar from "./SideBar";
+import getUserType from "src/functions/utility/getUserType";
 
 type Props = {
   children: React.ReactNode;
 };
 
-export default function AdminLayout({ children }: Props) {
-
+export default function Layout({ children }: Props) {
+  const type = getUserType()
   return (
     <SidebarProvider style={
-        {
-          "--sidebar-width": "10rem",
-          "--sidebar-width-mobile": "10rem",
-        } as React.CSSProperties
-      }>
+      {
+        "--sidebar-width": "10rem",
+        "--sidebar-width-mobile": "10rem",
+      } as React.CSSProperties
+    }>
       <div className="flex min-h-screen w-full bg-background">
         <SideBar />
 
@@ -30,7 +31,9 @@ export default function AdminLayout({ children }: Props) {
             <SidebarTrigger />
 
             <h1 className="ml-4 font-semibold text-foreground">
-              Admin Dashboard
+              {type === "admin" && <>Admin Dashboard</>}
+              {type === "car_owner" && <>Car Owner Dashboard</>}
+              {type === "inventory_manager" && <>Inventory Manager Dashboard</>}
             </h1>
           </header>
 
