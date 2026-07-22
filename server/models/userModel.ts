@@ -1,6 +1,6 @@
 import mongoose, { Document, Schema, Types } from "mongoose";
 import { hashPassword } from "../utils/hash.js";
-
+import { type IRefreshToken } from "../types/types.js";
 
 // Allowed user types
 export enum UserType {
@@ -16,8 +16,17 @@ export interface IUser extends Document {
     email: string;
     password: string;
     type: UserType;
+    refreshTokens: IRefreshToken[];
     createdAt: Date;
     updatedAt: Date;
+}
+
+declare global {
+    namespace Express {
+        interface Request {
+            user?: IUser;
+        }
+    }
 }
 
 // Mongoose schema
@@ -45,6 +54,12 @@ const UserSchema: Schema<IUser> = new Schema(
             enum: Object.values(UserType),
             default: UserType.CAR_OWNER,
         },
+        refreshTokens: [
+            {
+                _id: mongoose.Schema.Types.ObjectId,
+                token: String,
+            }
+        ]
     },
     {
         timestamps: true,
@@ -54,20 +69,20 @@ const UserSchema: Schema<IUser> = new Schema(
 
 // Hash on save
 UserSchema.pre("save", async function (this: any) {
-  const user = this as any;
+    const user = this as any;
 
-  if (!user.isModified("password")) return;
+    if (!user.isModified("password")) return;
 
-  user.password = await hashPassword(user.password);
+    user.password = await hashPassword(user.password);
 });
 
 // Hash on update
 UserSchema.pre("findOneAndUpdate", async function (this: any) {
-  const update = this.getUpdate() as { password?: string } | undefined;
+    const update = this.getUpdate() as { password?: string } | undefined;
 
-  if (!update?.password) return;
+    if (!update?.password) return;
 
-  update.password = await hashPassword(update.password);
+    update.password = await hashPassword(update.password);
 });
 
 // Export model

@@ -2,6 +2,7 @@ import express, { type Request, type Response } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import dotenv from "dotenv";
+import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
@@ -10,7 +11,14 @@ dotenv.config();
 
 const app = express();
 
-app.use(cors());
+app.use(cookieParser());
+
+app.use(
+  cors({
+    origin: "http://localhost:5173", // frontend URL
+    credentials: true,               
+  })
+);
 app.use(express.json());
 
 app.get("/", (req: Request, res: Response) => {

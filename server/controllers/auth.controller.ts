@@ -3,7 +3,9 @@ import { type Request, type Response } from "express";
 import userModel from "../models/userModel.js";
 import { comparePassword } from "../utils/hash.js"
 import { generateToken } from "../utils/generate_token.js";
+import decode from "../utils/decode_tokens.js"
 import { registerSchema } from "@shared/schemas/user.schema.js";
+import { type IRefreshToken } from "../types/types.js";
 
 // Register
 export const registerUser = async (req: Request, res: Response) => {
@@ -84,14 +86,36 @@ export const loginUser = async (req: Request, res: Response) => {
       });
     }
 
-    // 5. Create token
+    // 5. Create access token
     const token = generateToken({
       _id: user._id.toString(),
       email: user.email,
       type: user.type,
+    }, "1m");
+
+    // 6. Store refresh token in DB
+    const refreshToken = generateToken({
+      _id: user._id.toString(),
+      email: user.email,
+      type: user.type,
+    }, "2m");
+
+    const refreshTokenDoc: IRefreshToken = {
+      token: refreshToken,
+      createdAt: new Date()
+    };
+
+    user.refreshTokens.push(refreshTokenDoc);
+    await user.save();
+
+    // Send cookie
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      secure: false, // set true in prod
+      sameSite: "lax", // strict
     });
 
-    // 6. Return success response
+    // 7. Return success response
     return res.status(200).json({
       message: "Login successful",
       token,
@@ -103,4 +127,52 @@ export const loginUser = async (req: Request, res: Response) => {
       message: "Server error",
     });
   }
+}
+
+export const refresh = async (req: Request, res: Response) => {
+  const token = req.cookies.refreshToken;
+  console.log("refresh", token)
+  if (!token) return res.sendStatus(401);
+
+  let decoded;
+
+  try {
+    decoded = decode(token);
+  } catch (err) {
+    return res.sendStatus(403); // invalid or expired refresh token
+  }
+
+  const user = await userModel.findById(decoded._id);
+
+  if (!user || !user.refreshTokens.some(rt => rt.token === token)) {
+    return res.sendStatus(403);
+  }
+
+  const newToken = generateToken({
+    _id: user._id.toString(),
+    email: user.email,
+    type: user.type,
+  });
+
+  res.json({ token: newToken });
+};
+
+export const logout = async (req: Request, res: Response) => {
+  const token = req.cookies.refreshToken;
+
+  if (!req.user) {
+    return res.status(401).json({ message: "User not authenticated" });
+  }
+
+  await userModel.updateOne(
+    { _id: req.user._id },
+    {
+      $pull: {
+        refreshTokens: { token: token }
+      }
+    }
+  );
+
+  res.clearCookie("refreshToken");
+  res.json({ message: "Logged out" });
 }
