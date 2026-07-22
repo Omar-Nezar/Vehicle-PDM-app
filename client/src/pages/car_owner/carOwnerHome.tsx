@@ -1,8 +1,16 @@
+import Layout from "../common/Layout";
+
 export default function CarOwnerHome() {
-    return (
-        <div className="flex flex-col items-center justify-center h-screen">
-            <h1 className="text-4xl font-bold mb-4">Welcome, Car Owner!</h1>
-            <p className="text-lg text-gray-600">This is your home page.</p>
-        </div>
-    );
+  return (
+    <Layout>
+      <div className="flex flex-1 overflow-hidden">
+
+        <main className="flex-1 p-6">
+          <h1 className="text-2xl font-semibold">
+            Welcome Car Owner
+          </h1>
+        </main>
+      </div>
+    </Layout>
+  );
 }
