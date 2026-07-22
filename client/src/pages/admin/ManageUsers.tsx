@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { delUser, getUsers } from "../../slices/userSlice";
-import AdminLayout from "./AdminLayout"
+import AdminLayout from "../common/Layout"
 import getUserBadge from "../../functions/admin/getBadge";
 import Toast from "../common/Toast"
 
