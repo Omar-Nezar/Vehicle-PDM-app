@@ -18,7 +18,7 @@ export const loginUser = createAsyncThunk(
         try {
 
             const res = await loginRequest(data)
-            const token  = res.token;
+            const token = res.token;
             localStorage.setItem("authToken", token);
             return res;
 

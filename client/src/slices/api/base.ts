@@ -34,7 +34,7 @@ API.interceptors.response.use(
         );
 
         const newToken = res.data.token;
-
+        console.warn("NewToken: ", newToken)
         localStorage.setItem("authToken", newToken);
 
         API.defaults.headers.common.Authorization = `Bearer ${newToken}`;
@@ -43,7 +43,7 @@ API.interceptors.response.use(
         return API(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem("authToken");
-        window.location.href = "/login";
+        window.location.href = "/login"
         return Promise.reject(refreshError);
       }
     }
