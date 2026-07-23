@@ -1,5 +1,4 @@
 import jwt from "jsonwebtoken";
-import { type SignOptions } from "jsonwebtoken";
 
 type tokenPayload = {
   _id: string;
@@ -9,9 +8,11 @@ type tokenPayload = {
 
 export const generateToken = (
   payload: tokenPayload,
-  expiresIn: SignOptions["expiresIn"] = "1d"
+  use: string = "user"
 ) => {
-  return jwt.sign(payload, process.env.JWT_SECRET as string, {
-    expiresIn,
-  });
+  if (use === "user") {
+    return jwt.sign(payload, process.env.JWT_SECRET as string, { expiresIn: "1h", });
+  } else {
+    return jwt.sign(payload, process.env.JWT_REFRESH_SECRET as string, { expiresIn: "4h", })
+  }
 };
