@@ -3,6 +3,7 @@ import { useAppDispatch, useAppSelector } from "src/store/hooks";
 import { type RootState } from "src/store/store"
 import { addCar } from "src/slices/carSlice";
 import showToast from "../common/Toast";
+import Layout from "../common/Layout";
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -42,7 +43,7 @@ const AddVehicle = () => {
     };
 
     return (
-        <div className="flex justify-center items-center min-h-screen bg-muted/40">
+        <Layout>
             <Card className="w-full max-w-md shadow-xl">
                 <CardHeader>
                     <CardTitle className="text-2xl">Add Vehicle</CardTitle>
@@ -52,7 +53,7 @@ const AddVehicle = () => {
                     <form onSubmit={handleSubmit} className="space-y-4">
 
                         <div className="space-y-2">
-                            <Label htmlFor="make">Make</Label>
+                            <Label htmlFor="make">Brand</Label>
                             <Input id="make" name="make" onChange={handleChange} />
                         </div>
 
@@ -78,6 +79,11 @@ const AddVehicle = () => {
                             <Input id="plateNumber" name="plateNumber" onChange={handleChange} />
                         </div>
 
+                        <div className="space-y-2">
+                            <Label htmlFor="vin">VIN</Label>
+                            <Input id="vin" name="vin" onChange={handleChange} />
+                        </div>
+
                         <Button type="submit" className="w-full" disabled={loading}>
                             {loading ? "Adding..." : "Add Vehicle"}
                         </Button>
@@ -85,7 +91,7 @@ const AddVehicle = () => {
                     </form>
                 </CardContent>
             </Card>
-        </div>
+        </Layout>
     );
 };
 
