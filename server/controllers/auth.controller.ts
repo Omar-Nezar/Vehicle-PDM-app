@@ -91,14 +91,14 @@ export const loginUser = async (req: Request, res: Response) => {
       _id: user._id.toString(),
       email: user.email,
       type: user.type,
-    }, "1m");
+    });
 
     // 6. Store refresh token in DB
     const refreshToken = generateToken({
       _id: user._id.toString(),
       email: user.email,
       type: user.type,
-    }, "2m");
+    }, "refresh");
 
     const refreshTokenDoc: IRefreshToken = {
       token: refreshToken,
@@ -131,13 +131,13 @@ export const loginUser = async (req: Request, res: Response) => {
 
 export const refresh = async (req: Request, res: Response) => {
   const token = req.cookies.refreshToken;
-  console.log("refresh", token)
+
   if (!token) return res.sendStatus(401);
 
   let decoded;
 
   try {
-    decoded = decode(token);
+    decoded = decode(token, "refresh");
   } catch (err) {
     return res.sendStatus(403); // invalid or expired refresh token
   }
