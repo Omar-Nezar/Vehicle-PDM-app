@@ -6,6 +6,7 @@ import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
+import carRoutes from "./routes/car.routes.js"
 
 dotenv.config();
 
@@ -41,3 +42,4 @@ try {
 // routes
 app.use("/auth", authRoutes);
 app.use("/user", userRoutes);
+app.use("/car", carRoutes)
