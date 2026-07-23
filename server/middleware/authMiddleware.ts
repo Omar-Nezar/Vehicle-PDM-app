@@ -2,7 +2,7 @@ import { type Request, type Response, type NextFunction } from "express";
 import decode from "../utils/decode_tokens.js";
 import userModel from "../models/userModel.js";
 
-interface AuthRequest extends Request {
+export interface AuthRequest extends Request {
     user?: any;
 }
 
@@ -46,4 +46,16 @@ export const adminOnly = (
         console.log("here")
         return res.status(403).json({ message: "Admin access required" });
     }
+};
+
+export const carOwnerOnly = (
+  req: AuthRequest,
+  res: Response,
+  next: NextFunction
+) => {
+  if (req.user && req.user.type === "car_owner") {
+    next();
+  } else {
+    return res.status(403).json({ message: "Car owner access required" });
+  }
 };

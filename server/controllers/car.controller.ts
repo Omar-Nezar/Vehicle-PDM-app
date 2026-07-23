@@ -4,16 +4,17 @@ import { type AuthRequest } from "../middleware/authMiddleware.js";
 
 export const addVehicle = async (req: AuthRequest, res: Response) => {
     try {
-        const { make, model, year, plateNumber, mileage } = req.body;
+        const { make, model, year, plateNumber, mileage, vin } = req.body;
 
-        if (!make || !model || !year || !plateNumber || !mileage) {
+        if (!make || !model || !year || !plateNumber || !mileage || !vin) {
             return res.status(400).json({ message: "All fields are required" });
         }
 
-        const plateExists = await vehicleModel.findOne({ plateNumber })
-        if (plateExists) {
+        const vinExists = await vehicleModel.findOne({ vin })
+        if (vinExists) {
+            console.log("Vin!")
             return res.status(400).json({
-                message: "Vehicle with this plate already exists",
+                message: "Vehicle with this VIN already exists",
             });
         }
 
@@ -26,7 +27,8 @@ export const addVehicle = async (req: AuthRequest, res: Response) => {
             model,
             year,
             plateNumber,
-            mileage
+            mileage,
+            vin
         });
 
         return res.status(201).json({
