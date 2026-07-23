@@ -52,11 +52,11 @@ export default function AppSidebar() {
                                     <SidebarMenuItem>
                                         <SidebarMenuButton className="rounded-2xl">
                                             <NavLink
-                                                to="/manageCar"
+                                                to="/addCar"
                                                 className={({ isActive }) => linkActive(isActive)}
                                             >
                                                 <CarFront className="w-4 h-4" />
-                                                <span>Manage Cars</span>
+                                                <span>Add Cars</span>
                                             </NavLink>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
