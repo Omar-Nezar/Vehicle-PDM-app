@@ -10,6 +10,7 @@ import ThemeButton from './theme'
 // Car Owner
 import CarOwnerHome from './pages/car_owner/carOwnerHome'
 import AddCar from './pages/car_owner/AddCar'
+import ManageCars from './pages/car_owner/ManageCars'
 
 // Admin
 import AdminHome from './pages/admin/AdminHome'
@@ -27,6 +28,7 @@ function App() {
         {/* Car Owner Routes */}
         <Route path="/carownerhome" element={<CarOwnerHome />} />
         <Route path="/addcar" element={<AddCar />} />
+        <Route path="/managecars" element={<ManageCars />} />
 
         {/* Admin Routes */}
         <Route path="/adminhome" element={<AdminHome />} />

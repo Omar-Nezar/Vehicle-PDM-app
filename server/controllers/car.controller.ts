@@ -40,3 +40,37 @@ export const addVehicle = async (req: AuthRequest, res: Response) => {
         return res.status(500).json({ message: "Server error" });
     }
 };
+
+export const getVehicles = async (req: AuthRequest, res: Response) => {
+  try {
+    const user = req.user.id;
+
+    const vehicles = await vehicleModel.find({ owner: user }).sort({
+      createdAt: -1,
+    });
+
+    return res.status(200).json({message: "Cars fetched successfully", cars: vehicles});
+  } catch (err) {
+    res.status(500).json({ message: "Failed to fetch vehicles" });
+  }
+};
+
+export const deleteVehicle = async (req: AuthRequest, res: Response) => {
+  try {
+    const user = req.user.id;
+    const { id } = req.params;
+
+    const vehicle = await vehicleModel.findOneAndDelete({
+      _id: id,
+      owner: user,
+    });
+
+    if (!vehicle) {
+      return res.status(404).json({ message: "Vehicle not found" });
+    }
+
+    res.status(200).json({ message: "Vehicle deleted" });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to delete vehicle" });
+  }
+};

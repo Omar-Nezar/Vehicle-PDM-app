@@ -60,6 +60,18 @@ export default function AppSidebar() {
                                             </NavLink>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
+
+                                    <SidebarMenuItem>
+                                        <SidebarMenuButton className="rounded-2xl">
+                                            <NavLink
+                                                to="/managecars"
+                                                className={({ isActive }) => linkActive(isActive)}
+                                            >
+                                                <CarFront className="w-4 h-4" />
+                                                <span>Manage Cars</span>
+                                            </NavLink>
+                                        </SidebarMenuButton>
+                                    </SidebarMenuItem>
                                 </SidebarMenu>
                             </SidebarGroupContent>
                         </SidebarGroup>
