@@ -1,5 +1,8 @@
 import { z } from "zod";
 
+export const brands = ["Nissan"];
+export const models = ["Altima", "Sunny", "X-Trail", "Patrol", "Maxima"]
+
 export const vehicleSchema = z.object({
   make: z.string().min(1, "Brand is required"),
   model: z.string().min(1, "Model is required"),
@@ -18,7 +21,10 @@ export const vehicleSchema = z.object({
     .max(10, "Too long")
     .transform((val) => val.toUpperCase()),
 
-  vin: z.string().min(1, "Model is required"),
+  vin: z.
+    string()
+    .min(1, "VIN is required")
+    .length(17, "VIN should be 17 characters long"),
 });
 
 export type VehicleFormData = z.infer<typeof vehicleSchema>;
