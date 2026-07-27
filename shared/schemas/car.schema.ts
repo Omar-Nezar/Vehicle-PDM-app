@@ -8,7 +8,7 @@ export const vehicleSchema = z.object({
   model: z.string().min(1, "Model is required"),
   year: z
     .number({ error: "Year must be a number" })
-    .min(1900, "Invalid year")
+    .min(1980, "Invalid year")
     .max(new Date().getFullYear(), "Year cannot be in the future"),
 
   mileage: z

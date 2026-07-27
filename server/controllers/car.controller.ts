@@ -2,7 +2,7 @@ import { type Request, type Response } from "express";
 import vehicleModel from "../models/vehicleModel.js";
 import { type AuthRequest } from "../middleware/authMiddleware.js";
 
-export const addVehicle = async (req: AuthRequest, res: Response) => {
+export const addCar = async (req: AuthRequest, res: Response) => {
     try {
         const { make, model, year, plateNumber, mileage, vin } = req.body;
 
@@ -21,7 +21,7 @@ export const addVehicle = async (req: AuthRequest, res: Response) => {
         // req.user comes from protect middleware
         const user = req.user._id;
 
-        const vehicle = await vehicleModel.create({
+        const car = await vehicleModel.create({
             owner: user,
             make,
             model,
@@ -32,8 +32,8 @@ export const addVehicle = async (req: AuthRequest, res: Response) => {
         });
 
         return res.status(201).json({
-            message: "Vehicle added successfully",
-            vehicle,
+            message: "Car added successfully",
+            car,
         });
     } catch (error: any) {
         console.error(error);
@@ -41,7 +41,7 @@ export const addVehicle = async (req: AuthRequest, res: Response) => {
     }
 };
 
-export const getVehicles = async (req: AuthRequest, res: Response) => {
+export const getCars = async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user.id;
 
@@ -55,7 +55,7 @@ export const getVehicles = async (req: AuthRequest, res: Response) => {
   }
 };
 
-export const deleteVehicle = async (req: AuthRequest, res: Response) => {
+export const deleteCar = async (req: AuthRequest, res: Response) => {
   try {
     const user = req.user.id;
     const { id } = req.params;
@@ -72,5 +72,25 @@ export const deleteVehicle = async (req: AuthRequest, res: Response) => {
     res.status(200).json({ message: "Vehicle deleted" });
   } catch (err) {
     res.status(500).json({ message: "Failed to delete vehicle" });
+  }
+};
+
+export const updateCar = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+
+    const updatedCar = await vehicleModel.findByIdAndUpdate(
+      id,
+      req.body,
+      { returnDocument: 'after', runValidators: true }
+    );
+
+    if (!updatedCar) {
+      return res.status(404).json({ message: "Car not found" });
+    }
+
+    return res.status(200).json({message: "Car updated successfully", car: updatedCar});
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update car" });
   }
 };

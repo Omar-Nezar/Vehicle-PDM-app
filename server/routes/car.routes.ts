@@ -1,11 +1,12 @@
 import express from "express";
-import { addVehicle, getVehicles, deleteVehicle } from "../controllers/car.controller.js";
+import { addCar, getCars, deleteCar, updateCar } from "../controllers/car.controller.js";
 import { protect, carOwnerOnly } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
-router.post("/addcar", protect, carOwnerOnly, addVehicle);
-router.get("/getUserCars", protect, carOwnerOnly, getVehicles)
-router.delete("/deletecar/:id", protect, carOwnerOnly, deleteVehicle )
+router.post("/addcar", protect, carOwnerOnly, addCar);
+router.get("/getUserCars", protect, carOwnerOnly, getCars)
+router.delete("/deletecar/:id", protect, carOwnerOnly, deleteCar)
+router.put("/updatecar/:id", protect, carOwnerOnly, updateCar);
 
 export default router;

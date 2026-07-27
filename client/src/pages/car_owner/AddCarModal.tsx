@@ -1,7 +1,7 @@
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { useAppDispatch, useAppSelector } from "src/store/hooks";
 import { type RootState } from "src/store/store";
-import { addCar } from "src/slices/carSlice";
+import { addCar, updateCar } from "src/slices/carSlice";
 import showToast from "../common/Toast";
 
 import { useForm } from "react-hook-form";
@@ -16,6 +16,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator"
 
 import {
     Combobox,
@@ -34,9 +35,20 @@ import {
     DialogTrigger,
 } from "@/components/ui/dialog";
 
-export default function AddCarModal({ children }: { children: ReactNode }) {
+type AddCarModalProps = {
+    children: React.ReactElement;
+    mode?: "add" | "edit";
+    car?: Partial<VehicleFormData> & { _id?: string };
+};
+
+export default function AddCarModal({
+    children,
+    mode = "add",
+    car,
+}: AddCarModalProps) {
     const dispatch = useAppDispatch();
     const { loading } = useAppSelector((state: RootState) => state.car);
+    console.log(loading)
 
     const [open, setOpen] = useState(false);
 
@@ -50,36 +62,64 @@ export default function AddCarModal({ children }: { children: ReactNode }) {
     } = useForm<VehicleFormData>({
         resolver: zodResolver(vehicleSchema),
         defaultValues: {
-            make: "",
-            model: "",
+            make: car?.make ?? "",
+            model: car?.model ?? "",
+            year: car?.year,
+            mileage: car?.mileage,
+            plateNumber: car?.plateNumber ?? "",
+            vin: car?.vin ?? "",
         },
     });
 
+    useEffect(() => {
+        if (open) {
+            reset({
+                make: car?.make ?? "",
+                model: car?.model ?? "",
+                year: car?.year,
+                mileage: car?.mileage,
+                plateNumber: car?.plateNumber ?? "",
+                vin: car?.vin ?? "",
+            });
+        }
+    }, [open, car, reset]);
+
     const onSubmit = async (data: VehicleFormData) => {
-        const promise = dispatch(addCar(data)).unwrap();
+        const action =
+            mode === "edit" && car?._id
+                ? updateCar({ id: car._id, data })
+                : addCar(data);
+
+        const promise = dispatch(action).unwrap();
 
         showToast({
             promise,
-            message: "Car Details Added Successfully",
-            description: "Car Details Saved",
-            errMsg: "Failed to Add Car",
+            message:
+                mode === "edit"
+                    ? "Car updated successfully"
+                    : "Car added successfully",
+            description:
+                mode === "edit"
+                    ? "Changes saved"
+                    : "Car details saved",
         });
 
         await promise;
         reset();
-        setOpen(false); // close modal after success
+        setOpen(false);
     };
 
     return (
         <Dialog open={open} onOpenChange={setOpen}>
 
-            <DialogTrigger>
-                {children}
-            </DialogTrigger>
+            <DialogTrigger render={children} />
 
             <DialogContent className="max-w-md">
                 <DialogHeader className="text-center">
-                    <DialogTitle>Add Vehicle</DialogTitle>
+                    <DialogTitle>
+                        {mode === "edit" ? "Edit Vehicle" : "Add Vehicle"}
+                    </DialogTitle>
+                    <Separator />
                 </DialogHeader>
 
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
@@ -148,6 +188,8 @@ export default function AddCarModal({ children }: { children: ReactNode }) {
                             <Label>Year</Label>
                             <Input
                                 type="number"
+                                min={1980}
+                                max={new Date().getFullYear()}
                                 {...register("year", { valueAsNumber: true })}
                             />
                             {errors.year && (
@@ -183,14 +225,21 @@ export default function AddCarModal({ children }: { children: ReactNode }) {
                     {/* VIN */}
                     <div className="space-y-2">
                         <Label>VIN</Label>
-                        <Input {...register("vin")} />
+                        <Input disabled={mode === "edit"}
+                            {...register("vin")} />
                         {errors.vin && (
                             <p className="text-sm text-red-500">{errors.vin.message}</p>
                         )}
                     </div>
 
                     <Button type="submit" className="w-full" disabled={loading}>
-                        {loading ? "Adding..." : "Add Vehicle"}
+                        {loading
+                            ? mode === "edit"
+                                ? "Saving..."
+                                : "Adding..."
+                            : mode === "edit"
+                                ? "Save Changes"
+                                : "Add Vehicle"}
                     </Button>
                 </form>
             </DialogContent>

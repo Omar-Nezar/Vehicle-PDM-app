@@ -1,10 +1,11 @@
 // features/vehicle/vehicleSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { addCarRequest, getCarsRequest, delCarRequest } from "./api/carApi";
+import { addCarRequest, getCarsRequest, delCarRequest, updCarRequest } from "./api/carApi";
 
 interface VehicleState {
     cars: any[];
     loading: boolean;
+    auxLoading: boolean;
     error: string | null;
     success: boolean;
 }
@@ -12,6 +13,7 @@ interface VehicleState {
 const initialState: VehicleState = {
     cars: [],
     loading: false,
+    auxLoading: false,
     error: null,
     success: false,
 };
@@ -41,6 +43,22 @@ export const getUserCars = createAsyncThunk(
     }
 );
 
+export const updateCar = createAsyncThunk(
+    "vehicle/update",
+    async (
+        { id, data }: { id: string; data: any },
+        thunkAPI
+    ) => {
+        try {
+            return await updCarRequest(id, data);
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to update vehicle"
+            );
+        }
+    }
+);
+
 export const deleteCar = createAsyncThunk(
     "vehicle/deleteCar",
     async (_id: string, thunkApi) => {
@@ -66,16 +84,18 @@ const vehicleSlice = createSlice({
         builder
             // ADD
             .addCase(addCar.pending, (state) => {
-                state.loading = true;
+                state.auxLoading = true;
                 state.error = null;
                 state.success = false;
             })
-            .addCase(addCar.fulfilled, (state) => {
-                state.loading = false;
+            .addCase(addCar.fulfilled, (state, action) => {
+                state.auxLoading = false;
                 state.success = true;
+                state.error = null;
+                state.cars.unshift(action.payload.car);
             })
             .addCase(addCar.rejected, (state, action) => {
-                state.loading = false;
+                state.auxLoading = false;
                 state.error = action.payload as string;
             });
         builder
@@ -88,6 +108,7 @@ const vehicleSlice = createSlice({
             .addCase(getUserCars.fulfilled, (state, action) => {
                 state.loading = false;
                 state.cars = action.payload.cars;
+                state.success = true
             })
             .addCase(getUserCars.rejected, (state, action) => {
                 state.loading = false;
@@ -97,22 +118,47 @@ const vehicleSlice = createSlice({
         builder
             // DELETE
             .addCase(deleteCar.pending, (state) => {
-                state.loading = true;
+                state.auxLoading = true;
                 state.error = null;
                 state.success = false;
             })
             .addCase(deleteCar.fulfilled, (state, action) => {
-                state.loading = false
+                state.auxLoading = false
                 state.error = null
                 state.success = true
                 state.cars = state.cars.filter(
-                    (car) => car._id !== action.payload
+                    (car) => car._id !== action.meta.arg
                 );
             })
             .addCase(deleteCar.rejected, (state, action) => {
-                state.loading = false;
+                state.auxLoading = false;
                 state.success = false;
                 state.error = action.payload as string;
+            });
+        builder
+            // UPDATE
+            .addCase(updateCar.pending, (state, action) => {
+                state.auxLoading = true;
+                state.success = false;
+                state.error = null
+            })
+            .addCase(updateCar.fulfilled, (state, action) => {
+                state.auxLoading = false;
+                state.success = false;
+                state.error = null
+                const car = action.payload.car
+                const index = state.cars.findIndex(
+                    (c) => c._id === car._id
+                );
+
+                if (index !== -1) {
+                    state.cars[index] = car;
+                }
+            })
+            .addCase(updateCar.rejected, (state, action) => {
+                state.auxLoading = false;
+                state.success = false;
+                state.error = action.payload as string
             });
     },
 });
