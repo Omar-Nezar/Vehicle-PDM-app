@@ -8,24 +8,25 @@ import {
     SidebarMenuItem,
     SidebarMenuButton,
     SidebarRail,
+    SidebarFooter
 } from "@/components/ui/sidebar";
-import { Home, Users, CarFront } from "lucide-react";
+import { Home, Users, User, CarFront } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
-import getUserType from "src/functions/utility/getUserType";
+import decodeToken from "src/functions/utility/decodeToken";
 
 export default function AppSidebar() {
 
     const linkActive = (isActive: boolean) =>
         cn(
-            "flex items-center gap-2 py-3 w-full h-full rounded-2xl",
+            "flex items-center gap-2 py-3 w-full h-full rounded-sm",
             isActive
                 ? "bg-accent text-accent-foreground"
                 : "text-muted-foreground"
         );
 
-    const type = getUserType()
+    const { name, type, email } = decodeToken()!
 
     return (
         <Sidebar collapsible="icon">
@@ -38,25 +39,13 @@ export default function AppSidebar() {
                             <SidebarGroupContent>
                                 <SidebarMenu>
                                     <SidebarMenuItem>
-                                        <SidebarMenuButton className="rounded-2xl">
+                                        <SidebarMenuButton className="rounded-2xl" >
                                             <NavLink
                                                 to="/carownerhome"
                                                 className={({ isActive }) => linkActive(isActive)}
                                             >
                                                 <Home className="w-4 h-4" />
                                                 <span>Dashboard</span>
-                                            </NavLink>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton className="rounded-2xl">
-                                            <NavLink
-                                                to="/addCar"
-                                                className={({ isActive }) => linkActive(isActive)}
-                                            >
-                                                <CarFront className="w-4 h-4" />
-                                                <span>Add Cars</span>
                                             </NavLink>
                                         </SidebarMenuButton>
                                     </SidebarMenuItem>
@@ -111,7 +100,24 @@ export default function AppSidebar() {
                         </SidebarGroup>
                     </>}
             </SidebarContent>
-
+            <SidebarFooter>
+                <SidebarMenu>
+                    <SidebarMenuItem>
+                        <SidebarMenuButton className="flex items-center gap-2 py-3 rounded-2xl">
+                            {/* Profile image can be added ater */}
+                            <User className="w-4 h-4" />
+                            <div className="flex flex-col text-left">
+                                <span className="text-xs font-medium">
+                                    {name || "User"}
+                                </span>
+                                <span className="text-muted-foreground text-[8px]">
+                                    {email || "Email"}
+                                </span>
+                            </div>
+                        </SidebarMenuButton>
+                    </SidebarMenuItem>
+                </SidebarMenu>
+            </SidebarFooter>
             <SidebarRail />
         </Sidebar>
     );
