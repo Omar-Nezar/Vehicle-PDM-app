@@ -1,8 +1,8 @@
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { delUser, getUsers } from "../../slices/userSlice";
 import AdminLayout from "../common/Layout"
-import getUserBadge from "../../functions/admin/getBadge";
+import UserBadge from "./UserBadge";
 import Toast from "../common/Toast"
 
 import { Trash2 } from "lucide-react";
@@ -21,8 +21,9 @@ import {
 } from "@/components/ui/table"
 
 export default function ManageUsers() {
+  const [deletingId, setDeletingId] = useState<string | null>(null);
   const dispatch = useAppDispatch();
-  const { users, loading, delLoading, error } = useAppSelector(
+  const { users, loading, error } = useAppSelector(
     (state) => state.user
   );
 
@@ -33,10 +34,14 @@ export default function ManageUsers() {
 
   const handleDelete = async (_id: string) => {
     try {
+      setDeletingId(_id);
       const promise = dispatch(delUser(_id)).unwrap();
       Toast({ promise, message: "User Deleted Successfully", description: `User ${_id} Deleted` })
+      await promise
     } catch (err) {
       console.error(err);
+    } finally {
+      setDeletingId(null);
     }
   };
 
@@ -68,8 +73,6 @@ export default function ManageUsers() {
 
             <TableBody>
               {users.map((user) => {
-                const badge = getUserBadge(user.type);
-
                 return (
                   <TableRow
                     key={user._id}
@@ -84,22 +87,20 @@ export default function ManageUsers() {
                     </TableCell>
 
                     <TableCell className="p-3">
-                      <Badge className={`w-25 px-2 py-1 rounded text-xs ${badge.className}`}>
-                        {badge.label}
-                      </Badge>
+                      <UserBadge type={user.type} />
                     </TableCell>
 
                     <TableCell className="p-3 text-right">
                       <Badge
                         variant="destructive"
                         onClick={() => handleDelete(user._id)}
-                        className="px-2 py-1 cursor-pointer hover:bg-destructive/40 dark:hover:bg-destructive/40"
+                        className="px-2 py-1 cursor-pointer hover:bg-destructive/30 dark:hover:bg-destructive/30"
                       >
-                        {
-                          !delLoading
-                            ? <Trash2 className="w-4 h-4" data-icon="inline-start" />
-                            : <Spinner data-icon="inline-start" />
-                        }
+                        {deletingId === user._id ? (
+                          <Spinner data-icon='inline-start' />
+                        ) : (
+                          <Trash2 size={16} />
+                        )}
                         <span>Delete</span>
                       </Badge>
                     </TableCell>
