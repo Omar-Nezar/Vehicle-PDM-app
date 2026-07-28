@@ -2,6 +2,7 @@ import { jwtDecode } from "jwt-decode";
 
 interface TokenPayload {
     _id: string;
+    name: string;
     email: string;
     type: string;
     iat?: number;

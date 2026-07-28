@@ -41,6 +41,7 @@ export const registerUser = async (req: Request, res: Response) => {
     // 5. Create token
     const token = generateToken({
       _id: user._id.toString(),
+      name: user.name,
       email: user.email,
       type: user.type,
     });
@@ -89,6 +90,7 @@ export const loginUser = async (req: Request, res: Response) => {
     // 5. Create access token
     const token = generateToken({
       _id: user._id.toString(),
+      name: user.name,
       email: user.email,
       type: user.type,
     });
@@ -96,6 +98,7 @@ export const loginUser = async (req: Request, res: Response) => {
     // 6. Store refresh token in DB
     const refreshToken = generateToken({
       _id: user._id.toString(),
+      name: user.name,
       email: user.email,
       type: user.type,
     }, "refresh");
@@ -150,6 +153,7 @@ export const refresh = async (req: Request, res: Response) => {
 
   const newToken = generateToken({
     _id: user._id.toString(),
+    name: user.name,
     email: user.email,
     type: user.type,
   });
