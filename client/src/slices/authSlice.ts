@@ -67,11 +67,7 @@ const initialState: AuthState = {
 const authSlice = createSlice({
     name: "auth",
     initialState,
-    reducers: {
-        logout: (state) => {
-            state.token = null;
-        },
-    },
+    reducers: {},
     extraReducers: (builder) => {
         // Login
         builder
@@ -108,6 +104,7 @@ const authSlice = createSlice({
                 state.error = null
             })
             .addCase(logoutUser.fulfilled, (state) => {
+                state.loading = false
                 state.token = null;
             })
             .addCase(logoutUser.rejected, (state, action: any) => {
@@ -117,5 +114,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { logout } = authSlice.actions;
+// export const {  } = authSlice.actions;
 export default authSlice.reducer;
