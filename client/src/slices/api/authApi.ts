@@ -23,6 +23,11 @@ export const registerRequest = async (data: RegisterPayload) => {
   return res.data;
 };
 
+export const updUserRequest = async (data: { name: string }) => {
+  const res = await API.put(`/auth/update`, data)
+  return res.data
+}
+
 export const logoutRequest = async() => {
   const res = await API.post(`/auth/logout`)
   return res.data

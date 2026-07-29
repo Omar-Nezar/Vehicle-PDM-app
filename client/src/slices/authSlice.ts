@@ -3,6 +3,7 @@ import {
     loginRequest,
     registerRequest,
     logoutRequest,
+    updUserRequest,
     type LoginPayload,
     type RegisterPayload,
 } from "./api/authApi";
@@ -58,6 +59,19 @@ export const registerUser = createAsyncThunk(
     }
 );
 
+export const updateUser = createAsyncThunk(
+    "auth/updateUser",
+    async (data: { name: string }, thunkApi) => {
+        try {
+            return await updUserRequest(data)
+        } catch (err: any) {
+            return thunkApi.rejectWithValue(
+                err.response?.data || { message: "Update failed" }
+            );
+        }
+    }
+);
+
 const initialState: AuthState = {
     token: localStorage.getItem("authToken"),
     loading: false,
@@ -97,6 +111,22 @@ const authSlice = createSlice({
                 state.loading = false;
                 state.error = action.payload;
             });
+        builder
+            // UPD
+            .addCase(updateUser.pending, (state, action) => {
+                state.loading = false
+                state.error = null
+            })
+            .addCase(updateUser.fulfilled, (state, action) => {
+                state.loading = false
+                state.error = null
+                state.token = action.payload.token
+                localStorage.setItem("authToken", action.payload.token);
+            })
+            .addCase(updateUser.rejected, (state, action: any) => {
+                state.loading = false
+                state.error = action.payload
+            })
         // Logout
         builder
             .addCase(logoutUser.pending, (state) => {

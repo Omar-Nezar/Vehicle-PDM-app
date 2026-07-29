@@ -161,6 +161,41 @@ export const refresh = async (req: Request, res: Response) => {
   res.json({ token: newToken });
 };
 
+export const updateUser = async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { name } = req.body;
+
+    const updatedUser = await userModel.findByIdAndUpdate(
+      req.user._id,
+      {
+        $set: {
+          ...(name && { name }),
+        },
+      },
+      { returnDocument: 'after' }
+    ).select("-password -refreshTokens");
+
+    if (!updatedUser) {
+      return res.status(400).json({ message: "User not found" });
+    }
+
+    const newToken = generateToken({
+      _id: updatedUser._id.toString(),
+      name: updatedUser.name,
+      email: updatedUser.email,
+      type: updatedUser.type,
+    })
+
+    res.status(200).json({ message: "User updated successfully", user: updatedUser, token: newToken });
+  } catch (err) {
+    res.status(500).json({ message: "Failed to update user" });
+  }
+};
+
 export const logout = async (req: Request, res: Response) => {
   try {
     const token = req.cookies.refreshToken;

@@ -1,3 +1,4 @@
+import { useState } from "react"
 import {
     Sidebar,
     SidebarContent,
@@ -31,8 +32,10 @@ import { useNavigate } from "react-router-dom";
 import showToast from "../common/Toast";
 import UserAvatar from "./UserAvatar";
 import getInitials from "src/functions/utility/getInitials";
+import AccountModal from "./ManageAccount";
 
 export default function AppSidebar() {
+    const [accountModalOpen, setAccountModalOpen] = useState(false);
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
@@ -172,7 +175,7 @@ export default function AppSidebar() {
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem>
+                                    <DropdownMenuItem onSelect={() => setAccountModalOpen(true)} onClick={() => setAccountModalOpen(true)}>
                                         <BadgeCheck />
                                         Account
                                     </DropdownMenuItem>
@@ -194,6 +197,10 @@ export default function AppSidebar() {
                 </SidebarMenu>
             </SidebarFooter>
             <SidebarRail />
+            <AccountModal
+                open={accountModalOpen}
+                onOpenChange={setAccountModalOpen}
+            />
         </Sidebar>
     );
 }
