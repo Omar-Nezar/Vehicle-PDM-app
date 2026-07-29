@@ -1,7 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getUsersRequest } from "./api/userApi";
-import { delUserRequest } from "./api/userApi";
+import { getUsersRequest, delUserRequest } from "./api/userApi";
 
 export const delUser = createAsyncThunk(
     "users/delUser",
@@ -57,6 +56,7 @@ const userSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
+            // GET
             .addCase(getUsers.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -70,6 +70,7 @@ const userSlice = createSlice({
                 state.error = action.payload as string;
             });
         builder
+            // DEL
             .addCase(delUser.pending, (state) => {
                 state.delLoading = true;
                 state.error = null;
