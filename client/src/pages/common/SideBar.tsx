@@ -62,79 +62,77 @@ export default function AppSidebar() {
                 : "text-muted-foreground"
         );
 
-    const { name, type, email } = decodeToken()!
+    const sidebarConfig = {
+        "car_owner": {
+            label: "Car Owner",
+            items: [
+                {
+                    label: "Dashboard",
+                    to: "/carownerhome",
+                    icon: Home,
+                },
+                {
+                    label: "Manage Cars",
+                    to: "/managecars",
+                    icon: CarFront,
+                },
+            ],
+        },
+        "admin": {
+            label: "Admin",
+            items: [
+                {
+                    label: "Dashboard",
+                    to: "/adminhome",
+                    icon: Home,
+                },
+                {
+                    label: "Manage Users",
+                    to: "/manageusers",
+                    icon: Users,
+                },
+            ],
+        },
+    };
+
+    type SidebarType = keyof typeof sidebarConfig; // "car_owner" | "admin"
+    const { name, type: decodedType, email } = decodeToken()!
+    const sidebarType = decodedType as SidebarType;
 
     return (
         <Sidebar collapsible="icon">
             <SidebarContent>
-                {type === "car_owner" &&
-                    <>
-                        <SidebarGroup>
-                            <SidebarGroupLabel>Car Owner</SidebarGroupLabel>
+                {sidebarConfig[sidebarType] && (
+                    <SidebarGroup>
+                        <SidebarGroupLabel>
+                            {sidebarConfig[sidebarType].label}
+                        </SidebarGroupLabel>
 
-                            <SidebarGroupContent>
-                                <SidebarMenu>
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton className="rounded-2xl" >
-                                            <NavLink
-                                                to="/carownerhome"
-                                                className={({ isActive }) => linkActive(isActive)}
-                                            >
-                                                <Home className="w-4 h-4" />
-                                                <span>Dashboard</span>
-                                            </NavLink>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
+                        <SidebarGroupContent>
+                            <SidebarMenu>
+                                {sidebarConfig[sidebarType].items.map((item, index) => {
+                                    const Icon = item.icon;
 
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton className="rounded-2xl">
-                                            <NavLink
-                                                to="/managecars"
-                                                className={({ isActive }) => linkActive(isActive)}
-                                            >
-                                                <CarFront className="w-4 h-4" />
-                                                <span>Manage Cars</span>
-                                            </NavLink>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-                    </>}
-                {type === "admin" &&
-                    <>
-                        <SidebarGroup>
-                            <SidebarGroupLabel>Admin</SidebarGroupLabel>
-
-                            <SidebarGroupContent>
-                                <SidebarMenu>
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton className="rounded-2xl">
-                                            <NavLink
-                                                to="/adminhome"
-                                                className={({ isActive }) => linkActive(isActive)}
-                                            >
-                                                <Home className="w-4 h-4" />
-                                                <span>Dashboard</span>
-                                            </NavLink>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-
-                                    <SidebarMenuItem>
-                                        <SidebarMenuButton className="rounded-2xl">
-                                            <NavLink
-                                                to="/manageusers"
-                                                className={({ isActive }) => linkActive(isActive)}
-                                            >
-                                                <Users className="w-4 h-4" />
-                                                <span>Manage Users</span>
-                                            </NavLink>
-                                        </SidebarMenuButton>
-                                    </SidebarMenuItem>
-                                </SidebarMenu>
-                            </SidebarGroupContent>
-                        </SidebarGroup>
-                    </>}
+                                    return (
+                                        <SidebarMenuItem key={index}>
+                                            <SidebarMenuButton className="rounded-2xl">
+                                                <NavLink
+                                                    to={item.to}
+                                                    className={({ isActive }) =>
+                                                        linkActive(isActive)
+                                                    }
+                                                >
+                                                    <Icon className="w-4 h-4" />
+                                                    <span>{item.label}</span>
+                                                </NavLink>
+                                            </SidebarMenuButton>
+                                        </SidebarMenuItem>
+                                    );
+                                })}
+                            </SidebarMenu>
+                        </SidebarGroupContent>
+                    </SidebarGroup>
+                )}
             </SidebarContent>
             <SidebarFooter>
                 <SidebarMenu>
