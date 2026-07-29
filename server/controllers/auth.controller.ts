@@ -162,21 +162,25 @@ export const refresh = async (req: Request, res: Response) => {
 };
 
 export const logout = async (req: Request, res: Response) => {
-  const token = req.cookies.refreshToken;
+  try {
+    const token = req.cookies.refreshToken;
 
-  if (!req.user) {
-    return res.status(401).json({ message: "User not authenticated" });
-  }
-
-  await userModel.updateOne(
-    { _id: req.user._id },
-    {
-      $pull: {
-        refreshTokens: { token: token }
-      }
+    if (!req.user) {
+      return res.status(401).json({ message: "User not authenticated" });
     }
-  );
 
-  res.clearCookie("refreshToken");
-  res.json({ message: "Logged out" });
+    await userModel.updateOne(
+      { _id: req.user._id },
+      {
+        $pull: {
+          refreshTokens: { token: token }
+        }
+      }
+    );
+
+    res.clearCookie("refreshToken");
+    res.status(200).json({ message: "Logged out" });
+  } catch (err) {
+    res.status(500).json({ message: "Logout failed" });
+  }
 }

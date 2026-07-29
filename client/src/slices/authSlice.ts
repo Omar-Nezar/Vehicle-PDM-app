@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
     loginRequest,
     registerRequest,
+    logoutRequest,
     type LoginPayload,
     type RegisterPayload,
 } from "./api/authApi";
@@ -26,6 +27,17 @@ export const loginUser = createAsyncThunk(
             return thunkAPI.rejectWithValue(
                 err.response?.data?.message || "Login failed"
             );
+        }
+    }
+);
+
+export const logoutUser = createAsyncThunk(
+    "auth/logout",
+    async (_, thunkAPI) => {
+        try {
+            return await logoutRequest()
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(err.response?.data || "Logout failed");
         }
     }
 );
@@ -87,6 +99,19 @@ const authSlice = createSlice({
             })
             .addCase(registerUser.rejected, (state, action: any) => {
                 state.loading = false;
+                state.error = action.payload;
+            });
+        // Logout
+        builder
+            .addCase(logoutUser.pending, (state) => {
+                state.loading = true
+                state.error = null
+            })
+            .addCase(logoutUser.fulfilled, (state) => {
+                state.token = null;
+            })
+            .addCase(logoutUser.rejected, (state, action: any) => {
+                state.loading = false
                 state.error = action.payload;
             });
     },
