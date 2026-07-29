@@ -10,13 +10,49 @@ import {
     SidebarRail,
     SidebarFooter
 } from "@/components/ui/sidebar";
-import { Home, Users, User, CarFront } from "lucide-react";
+import {
+    DropdownMenu,
+    DropdownMenuGroup,
+    DropdownMenuItem,
+    DropdownMenuContent,
+    DropdownMenuTrigger,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu"
+
+import { Home, Users, User, CarFront, LogOut, Bell, ChevronsUpDown, BadgeCheck } from "lucide-react";
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 import decodeToken from "src/functions/utility/decodeToken";
+import { useAppDispatch } from "src/store/hooks";
+import { logoutUser } from "src/slices/authSlice";
+import { useNavigate } from "react-router-dom";
+import showToast from "../common/Toast";
+import UserAvatar from "./UserAvatar";
+import getInitials from "src/functions/utility/getInitials";
 
 export default function AppSidebar() {
+    const dispatch = useAppDispatch();
+    const navigate = useNavigate();
+
+    const handleLogout = async () => {
+        const promise = dispatch(logoutUser()).unwrap();
+
+        showToast({
+            promise,
+            message: "Logged out",
+            description: "You have been logged out successfully",
+        });
+
+        try {
+            await promise;
+            localStorage.removeItem("authToken");
+            navigate("/login");
+        } catch (err) {
+            console.error(err)
+        }
+    };
 
     const linkActive = (isActive: boolean) =>
         cn(
@@ -103,18 +139,59 @@ export default function AppSidebar() {
             <SidebarFooter>
                 <SidebarMenu>
                     <SidebarMenuItem>
-                        <SidebarMenuButton className="flex items-center gap-2 py-3 rounded-2xl">
-                            {/* Profile image can be added ater */}
-                            <User className="w-4 h-4" />
-                            <div className="flex flex-col text-left">
-                                <span className="text-xs font-medium">
-                                    {name || "User"}
-                                </span>
-                                <span className="text-muted-foreground text-[8px]">
-                                    {email || "Email"}
-                                </span>
-                            </div>
-                        </SidebarMenuButton>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger
+                                render={
+                                    <SidebarMenuButton
+                                        size="lg"
+                                        className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                                    />
+                                }
+                            >
+                                <UserAvatar alt={name} fallback={getInitials(name)} />
+                                <div className="grid flex-1 text-left text-sm leading-tight">
+                                    <span className="truncate font-medium">{name}</span>
+                                    <span className="truncate text-xs">{email}</span>
+                                </div>
+                                <ChevronsUpDown className="ml-auto size-4" />
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent
+                                className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
+                                side={/*isMobile ? "bottom" :*/ "right"}
+                                align="end"
+                                sideOffset={4}
+                            >
+                                <DropdownMenuGroup>
+                                    <DropdownMenuLabel className="p-0 font-normal">
+                                        <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
+                                            <UserAvatar alt={name} fallback={getInitials(name)} />
+                                            <div className="grid flex-1 text-left text-sm leading-tight">
+                                                <span className="truncate font-medium">{name}</span>
+                                                <span className="truncate text-xs">{email}</span>
+                                            </div>
+                                        </div>
+                                    </DropdownMenuLabel>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem>
+                                        <BadgeCheck />
+                                        Account
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem>
+                                        <Bell />
+                                        Notifications
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                                <DropdownMenuGroup>
+                                    <DropdownMenuItem onClick={handleLogout}>
+                                        <LogOut className="h-4 w-4" />
+                                        Log out
+                                    </DropdownMenuItem>
+                                </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
                     </SidebarMenuItem>
                 </SidebarMenu>
             </SidebarFooter>
