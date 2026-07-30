@@ -1,16 +1,19 @@
 import { type Request, type Response } from "express";
 
 import userModel from "../models/userModel.js";
-import { comparePassword } from "../utils/hash.js"
-import { generateToken } from "../utils/generate_token.js";
-import decode from "../utils/decode_tokens.js"
-import { registerSchema } from "@shared/schemas/user.schema.js";
+import { hashPassword, comparePassword } from "../utils/hash.js"
+import { generateToken, generateResetToken } from "../utils/generate_token.js";
+import { decode, decodeSecret } from "../utils/decode_tokens.js"
 import { type IRefreshToken } from "../types/types.js";
+import { sendEmail } from "../utils/email.js";
+
+import { registerSchema } from "@shared/schemas/user.schema.js";
+import { resetPwdSchema } from "@shared/schemas/resetPwd.schema.js"
 
 // Register
 export const registerUser = async (req: Request, res: Response) => {
   try {
-    // 1. Validate input
+    // Validate input
     const parsed = registerSchema.safeParse(req.body);
 
     if (!parsed.success) {
@@ -21,7 +24,7 @@ export const registerUser = async (req: Request, res: Response) => {
 
     const { name, email, password, type } = req.body;
 
-    // 2. Check if user already exists
+    // Check if user already exists
     const existingUser = await userModel.findOne({ email });
 
     if (existingUser) {
@@ -30,7 +33,7 @@ export const registerUser = async (req: Request, res: Response) => {
       });
     }
 
-    // 4. Create user
+    // Create user
     const user = await userModel.create({
       name,
       email,
@@ -38,7 +41,7 @@ export const registerUser = async (req: Request, res: Response) => {
       type, // optional (defaults if not provided)
     });
 
-    // 5. Create token
+    // Create token
     const token = generateToken({
       _id: user._id.toString(),
       name: user.name,
@@ -46,7 +49,7 @@ export const registerUser = async (req: Request, res: Response) => {
       type: user.type,
     });
 
-    // 6. Return success response
+    // Return success response
     return res.status(201).json({
       message: "Registration successful",
       token,
@@ -65,13 +68,13 @@ export const loginUser = async (req: Request, res: Response) => {
   try {
     const { email, password, type } = req.body;
 
-    // 1. Basic validation
+    // Basic validation
     if (!email || !password) {
       return res.status(400).json({
         message: "Email and password are required",
       });
     }
-    // 2. Check if user exists
+    // Check if user exists
     const user = await userModel.findOne({ email, type });
     if (!user) {
       return res.status(400).json({
@@ -79,7 +82,7 @@ export const loginUser = async (req: Request, res: Response) => {
       });
     }
 
-    // 3. Check if password is correct
+    // Check if password is correct
     const isMatch = await comparePassword(password, user.password);
     if (!isMatch) {
       return res.status(400).json({
@@ -87,7 +90,7 @@ export const loginUser = async (req: Request, res: Response) => {
       });
     }
 
-    // 5. Create access token
+    // Create access token
     const token = generateToken({
       _id: user._id.toString(),
       name: user.name,
@@ -95,7 +98,7 @@ export const loginUser = async (req: Request, res: Response) => {
       type: user.type,
     });
 
-    // 6. Store refresh token in DB
+    // Store refresh token in DB
     const refreshToken = generateToken({
       _id: user._id.toString(),
       name: user.name,
@@ -118,7 +121,7 @@ export const loginUser = async (req: Request, res: Response) => {
       sameSite: "lax", // strict
     });
 
-    // 7. Return success response
+    // Return success response
     return res.status(200).json({
       message: "Login successful",
       token,
@@ -219,3 +222,65 @@ export const logout = async (req: Request, res: Response) => {
     res.status(500).json({ message: "Logout failed" });
   }
 }
+
+export const forgotPassword = async (req: Request, res: Response) => {
+  const msg = "If user exists, email sent"
+  const { email } = req.body;
+
+  const user = await userModel.findOne({ email });
+  if (!user) {
+    return res.status(200).json({ message: msg });
+  }
+
+  const token = generateResetToken(user);
+
+  const resetUrl = `${process.env.CLIENT_URL}/reset-password/${user._id}/${token}`;
+
+  const message = `
+    Click to reset password:
+    ${resetUrl}
+
+    This link expires in 15 minutes.
+  `;
+
+  await sendEmail({
+    to: user.email,
+    subject: "Password Reset",
+    text: message,
+  });
+
+  return res.status(200).json({ message: msg });
+};
+
+export const resetPassword = async (req: Request, res: Response) => {
+  const { id, token } = req.params;
+  const { password } = req.body;
+
+  // Validate input
+  const parsed = resetPwdSchema.safeParse(password);
+
+  if (!parsed.success) {
+    return res.status(400).json({
+      errors: parsed.error.issues,
+    });
+  }
+
+  const user = await userModel.findById(id);
+  if (!user || !token) {
+    return res.status(400).json({ message: "Invalid link" });
+  }
+
+  const secret = process.env.JWT_SECRET + user.password;
+
+  try {
+    const decoded = decodeSecret(token as string, secret);
+
+    user.password = await hashPassword(password);
+    await user.save();
+
+    res.status(200).json({ message: "Password reset successful" });
+
+  } catch (err) {
+    return res.status(400).json({ message: "Invalid or expired token" });
+  }
+};

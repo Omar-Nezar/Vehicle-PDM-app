@@ -28,7 +28,17 @@ export const updUserRequest = async (data: { name: string }) => {
   return res.data
 }
 
-export const logoutRequest = async() => {
+export const logoutRequest = async () => {
   const res = await API.post(`/auth/logout`)
+  return res.data
+}
+
+export const forgotPasswordRequest = async (data: { email: string }) => {
+  const res = await API.post(`/auth/forgotpassword`, data)
+  return res.data
+}
+
+export const resetPasswordRequest = async (data: { id: string; token: string; password: string }) => {
+  const res = await API.post(`/auth/reset-password/${data.id}/${data.token}`, { password: data.password });
   return res.data
 }
