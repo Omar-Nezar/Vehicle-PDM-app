@@ -1,5 +1,5 @@
 import { type Request, type Response, type NextFunction } from "express";
-import decode from "../utils/decode_tokens.js";
+import { decode } from "../utils/decode_tokens.js";
 import userModel from "../models/userModel.js";
 
 export interface AuthRequest extends Request {
