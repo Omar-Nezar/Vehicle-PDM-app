@@ -234,7 +234,7 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
   const token = generateResetToken(user);
 
-  const resetUrl = `${process.env.CLIENT_URL}/reset-password/${user._id}/${token}`;
+  const resetUrl = `${process.env.CLIENT_URL}/resetpassword/${user._id}/${token}`;
 
   const message = `
     Click to reset password:
@@ -254,10 +254,9 @@ export const forgotPassword = async (req: Request, res: Response) => {
 
 export const resetPassword = async (req: Request, res: Response) => {
   const { id, token } = req.params;
-  const { password } = req.body;
 
   // Validate input
-  const parsed = resetPwdSchema.safeParse(password);
+  const parsed = resetPwdSchema.safeParse(req.body);
 
   if (!parsed.success) {
     return res.status(400).json({
@@ -275,7 +274,8 @@ export const resetPassword = async (req: Request, res: Response) => {
   try {
     const decoded = decodeSecret(token as string, secret);
 
-    user.password = await hashPassword(password);
+    user.password = req.body.password;
+    console.log("Password reset successful for user:", user.email, user.password, req.body.password);
     await user.save();
 
     res.status(200).json({ message: "Password reset successful" });
