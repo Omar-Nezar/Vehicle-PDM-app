@@ -38,7 +38,7 @@ export const forgotPasswordRequest = async (data: { email: string }) => {
   return res.data
 }
 
-export const resetPasswordRequest = async (data: { id: string; token: string; password: string }) => {
-  const res = await API.post(`/auth/reset-password/${data.id}/${data.token}`, { password: data.password });
+export const resetPasswordRequest = async (data: { id: string; token: string; password: string; confirmPassword: string }) => {
+  const res = await API.post(`/auth/resetpassword/${data.id}/${data.token}`, { password: data.password, confirmPassword: data.confirmPassword });
   return res.data
 }
