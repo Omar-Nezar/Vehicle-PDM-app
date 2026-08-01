@@ -1,11 +1,12 @@
 import { z } from "zod";
+import { userBaseSchema } from "./userBase.schema";
 
-export const resetPwdSchema = z
-    .object({
-        password: z.string().min(6, "Password must be at least 6 characters"),
-        confirm: z.string(),
-    })
-    .refine((data) => data.password === data.confirm, {
-        message: "Passwords do not match",
-        path: ["confirm"],
-    });
+export const resetPwdSchema = userBaseSchema.pick({
+    password: true,
+    confirmPassword: true,
+}).refine((data) => data.password === data.confirmPassword, {
+    message: "Passwords do not match",
+    path: ["confirmPassword"],
+});
+
+export type ResetFormData = z.infer<typeof resetPwdSchema>;
