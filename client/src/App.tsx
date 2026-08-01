@@ -10,7 +10,7 @@ import RequireGuest from './routes/RequireGuest';
 import Login from './pages/common/Login'
 import Register from './pages/car_owner/Register'
 import ForgotPassword from './pages/common/ForgotPassword'
-import ThemeButton from './pages/common/ThemeButton'
+import ResetPassword from './pages/common/ResetPassword'
 
 // Car Owner
 import CarOwnerHome from './pages/car_owner/carOwnerHome'
@@ -19,6 +19,9 @@ import ManageCars from './pages/car_owner/ManageCars'
 // Admin
 import AdminHome from './pages/admin/AdminHome'
 import ManageUsers from './pages/admin/ManageUsers'
+
+// Aux
+import ThemeButton from './pages/common/ThemeButton'
 
 function App() {
   const location = useLocation();
@@ -46,6 +49,7 @@ function App() {
           <Route path="/" element={<Navigate to="/login" />} />
           <Route path="/login" element={<Login />} />
           <Route path="/forgotpassword" element={<ForgotPassword />} />
+          <Route path="/resetpassword/:id/:token" element={<ResetPassword />} />
           <Route path="/register" element={<Register />} />
         </Route>
 
