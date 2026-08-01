@@ -5,8 +5,7 @@ import { resetPassword } from "src/slices/authSlice";
 
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { resetPwdSchema } from "@schemas/resetPwd.schema";
-import { z } from "zod";
+import { resetPwdSchema, type ResetFormData } from "@schemas/resetPwd.schema";
 
 import showToast from "./Toast";
 
@@ -21,8 +20,6 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-
-type FormData = z.infer<typeof resetPwdSchema>;
 
 export default function ResetPassword() {
     const { id, token } = useParams();
@@ -44,11 +41,11 @@ export default function ResetPassword() {
         register,
         handleSubmit,
         formState: { errors },
-    } = useForm<FormData>({
+    } = useForm<ResetFormData>({
         resolver: zodResolver(resetPwdSchema),
     });
 
-    const onSubmit = (data: FormData) => {
+    const onSubmit = async (data: ResetFormData) => {
         if (!id || !token) {
             return showToast({
                 message: "Error",
@@ -56,7 +53,11 @@ export default function ResetPassword() {
             });
         }
 
-        dispatch(resetPassword({ id, token, password: data.password }));
+        const promise = dispatch(resetPassword({ id, token, password: data.password, confirmPassword: data.confirmPassword })).unwrap();
+        showToast({ promise, message: "Password Reset Successful!", description: "Your password has been reset" })
+
+        await promise
+        navigate("/login", { replace: true })
     };
 
     return (
@@ -79,22 +80,28 @@ export default function ResetPassword() {
                         <div className="space-y-2">
                             <Label>Password</Label>
                             <Input type="password" {...register("password")} />
-                            {errors.password && (
-                                <p className="text-sm text-red-500">
-                                    {errors.password.message}
-                                </p>
-                            )}
+                            <div
+                                className={`overflow-hidden transition-all duration-400 ease-in-out 
+                                    ${errors.password
+                                        ? "max-h-10 opacity-100 mb-1"
+                                        : "max-h-0 opacity-0"}`}
+                            >
+                                <p className="text-red-500 text-sm">{errors.password?.message}</p>
+                            </div>
                         </div>
 
                         {/* Confirm Password */}
                         <div className="space-y-2">
                             <Label>Confirm Password</Label>
-                            <Input type="password" {...register("confirm")} />
-                            {errors.confirm && (
-                                <p className="text-sm text-red-500">
-                                    {errors.confirm.message}
-                                </p>
-                            )}
+                            <Input type="password" {...register("confirmPassword")} />
+                            <div
+                                className={`overflow-hidden transition-all duration-400 ease-in-out 
+                                    ${errors.confirmPassword
+                                        ? "max-h-10 opacity-100 mb-1"
+                                        : "max-h-0 opacity-0"}`}
+                            >
+                                <p className="text-red-500 text-sm">{errors.confirmPassword?.message}</p>
+                            </div>
                         </div>
 
                         <Button
