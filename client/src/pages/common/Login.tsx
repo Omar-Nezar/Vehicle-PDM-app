@@ -26,6 +26,7 @@ import { type RootState } from "../../store/store";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import showToast from "../common/Toast"
 import determineHome from "../../functions/utility/determineHome";
+import LoadingButton from "./LoadingButton";
 
 export default function Login() {
     const dispatch = useAppDispatch();
@@ -144,9 +145,9 @@ export default function Login() {
                             />
                         </div>
 
-                        <Button className="w-full h-11 cursor-pointer" type="submit" disabled={loading}>
+                        <LoadingButton className="w-full h-11 cursor-pointer" type="submit" loading={loading} loadingChildren="Signing in...">
                             Sign in
-                        </Button>
+                        </LoadingButton>
                     </form>
 
                     <div className="my-6 flex items-center gap-3">
