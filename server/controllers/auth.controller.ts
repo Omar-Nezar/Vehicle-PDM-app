@@ -1,11 +1,12 @@
 import { type Request, type Response } from "express";
 
 import userModel from "../models/userModel.js";
-import { hashPassword, comparePassword } from "../utils/hash.js"
+import { comparePassword } from "../utils/hash.js"
 import { generateToken, generateResetToken } from "../utils/generate_token.js";
 import { decode, decodeSecret } from "../utils/decode_tokens.js"
 import { type IRefreshToken } from "../types/types.js";
 import { sendEmail } from "../utils/email.js";
+import authHelper from "../utils/authHelper.js";
 
 // Schemas
 import { registerSchema } from "@shared/schemas/user.schema.js";
@@ -43,13 +44,8 @@ export const registerUser = async (req: Request, res: Response) => {
       type, // optional (defaults if not provided)
     });
 
-    // Create token
-    const token = generateToken({
-      _id: user._id.toString(),
-      name: user.name,
-      email: user.email,
-      type: user.type,
-    });
+    // Issue tokens and set refresh token cookie (auto-login)
+    const token = await authHelper(user, res);
 
     // Return success response
     return res.status(201).json({
@@ -92,36 +88,8 @@ export const loginUser = async (req: Request, res: Response) => {
       });
     }
 
-    // Create access token
-    const token = generateToken({
-      _id: user._id.toString(),
-      name: user.name,
-      email: user.email,
-      type: user.type,
-    });
-
-    // Store refresh token in DB
-    const refreshToken = generateToken({
-      _id: user._id.toString(),
-      name: user.name,
-      email: user.email,
-      type: user.type,
-    }, "refresh");
-
-    const refreshTokenDoc: IRefreshToken = {
-      token: refreshToken,
-      createdAt: new Date()
-    };
-
-    user.refreshTokens.push(refreshTokenDoc);
-    await user.save();
-
-    // Send cookie
-    res.cookie("refreshToken", refreshToken, {
-      httpOnly: true,
-      secure: false, // set true in prod
-      sameSite: "lax", // strict
-    });
+    // Issue tokens and set refresh token cookie
+    const token = await authHelper(user, res);
 
     // Return success response
     return res.status(200).json({
