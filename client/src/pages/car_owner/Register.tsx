@@ -51,7 +51,7 @@ export default function Register() {
         showToast({ promise, message: "Registration Successful", description: "You have been logged in automatically" })
 
         await promise
-        // navigate("/carownerhome")
+        navigate("/carownerhome")
     };
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
