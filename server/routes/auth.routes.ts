@@ -10,13 +10,13 @@ import {
     resetPassword,
     changePassword,
 } from "../controllers/auth.controller.js";
-import { protect } from "../middleware/authMiddleware.js";
+import { carOwnerOnly, protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
 router.post("/register", registerUser);
 router.post("/login", loginUser);
-router.post("/update", updateUser);
+router.post("/update", protect, carOwnerOnly, updateUser);
 router.post("/refresh", refresh);
 router.post("/logout", protect, logout);
 
