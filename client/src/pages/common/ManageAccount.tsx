@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from "react";
 import { useAppDispatch } from "src/store/hooks";
+
 import {
     Dialog,
     DialogContent,
@@ -17,6 +18,8 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { updateUserSchema } from "@schemas/updateUser.schema";
 
+import ChangePassword from "./ChangePassword";
+
 type Props = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -27,6 +30,7 @@ type FormData = {
 };
 
 export default function AccountModal({ open, onOpenChange }: Props) {
+    const [view, setView] = useState<"account" | "password">("account");
     const dispatch = useAppDispatch();
 
     // Memoize decoded token so reference remains stable across renders
@@ -53,6 +57,7 @@ export default function AccountModal({ open, onOpenChange }: Props) {
                 name: user?.name || "",
             });
             setIsEditing(false);
+            setView("account"); // reset view
         }
     }, [open, user?.name, reset]);
 
@@ -79,67 +84,87 @@ export default function AccountModal({ open, onOpenChange }: Props) {
                     <DialogTitle>Account</DialogTitle>
                 </DialogHeader>
 
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-                    
-                        {/* Name */}
-                        <div className="space-y-2">
-                            <Label>Name</Label>
-                            <Input
-                                {...register("name")}
-                                disabled={!isEditing}
-                            />
-                            <div
-                                className={`overflow-hidden transition-all duration-400 ease-in-out 
-                                    ${errors.name
-                                        ? "max-h-10 opacity-100 mb-1"
-                                        : "max-h-0 opacity-0"}`}
-                            >
-                                <p className="text-red-500 text-sm">{errors.name?.message}</p>
-                            </div>
-                        </div>
+                <div className="overflow-hidden">
+                    <div
+                        className={`flex w-[200%] transition-transform duration-500 ease-in-out ${view === "account" ? "translate-x-0" : "-translate-x-1/2"
+                            }`}
+                    >
 
-                        {/* Email */}
-                        <div className="space-y-2">
-                            <Label>Email</Label>
-                            <Input value={user?.email || ""} disabled />
-                        </div>
+                        {/* ================= ACCOUNT VIEW ================= */}
+                        <div className="w-1/2 pr-2">
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
 
-                        {/* Role */}
-                        <div className="space-y-2">
-                            <Label>Role</Label>
-                            <Input value={user?.type || ""} disabled />
-                        </div>
-  
+                                {/* Name */}
+                                <div className="space-y-2">
+                                    <Label>Name</Label>
+                                    <Input {...register("name")} disabled={!isEditing} />
+                                </div>
+                                <div
+                                    className={`origin-top transition-all duration-300 ${errors.name ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0"
+                                        }`}
+                                >
+                                    <p className="text-red-500 text-sm mt-1">
+                                        {errors.name?.message}
+                                    </p>
+                                </div>
 
-                    {/* Actions */}
-                    <div className="flex justify-end gap-2 mt-4">
-                        {!isEditing ? (
-                            <Button type="button" onClick={() => setIsEditing(true)}>
-                                Edit
-                            </Button>
-                        ) : (
-                            <>
+                                {/* Email */}
+                                <div className="space-y-2">
+                                    <Label>Email</Label>
+                                    <Input value={user?.email || ""} disabled />
+                                </div>
+
+                                {/* Role */}
+                                <div className="space-y-2">
+                                    <Label>Role</Label>
+                                    <Input value={user?.type || ""} disabled />
+                                </div>
+
+                                {/* Change password link */}
                                 <Button
                                     type="button"
-                                    variant="outline"
-                                    onClick={() => {
-                                        reset();
-                                        setIsEditing(false);
-                                    }}
+                                    onClick={() => setView("password")}
+                                    variant="link" size="sm"
+                                    className="cursor-pointer mx-0 p-0"
+                                    disabled = { isEditing }
                                 >
-                                    Cancel
+                                    Change password
                                 </Button>
 
-                                <Button
-                                    type="submit"
-                                    disabled={!isDirty || isSubmitting}
-                                >
-                                    {isSubmitting ? "Saving..." : "Save"}
-                                </Button>
-                            </>
-                        )}
+                                {/* Actions */}
+                                <div className="flex justify-end gap-2">
+                                    {!isEditing ? (
+                                        <Button type="button" onClick={() => setIsEditing(true)}>
+                                            Edit
+                                        </Button>
+                                    ) : (
+                                        <>
+                                            <Button
+                                                type="button"
+                                                variant="outline"
+                                                onClick={() => {
+                                                    reset();
+                                                    setIsEditing(false);
+                                                }}
+                                            >
+                                                Cancel
+                                            </Button>
+
+                                            <Button type="submit" disabled={!isDirty || isSubmitting}>
+                                                {isSubmitting ? "Saving..." : "Save"}
+                                            </Button>
+                                        </>
+                                    )}
+                                </div>
+                            </form>
+                        </div>
+
+                        {/* ================= PASSWORD VIEW ================= */}
+                        <div className="w-1/2 pl-2">
+                            <ChangePassword onBack={() => setView("account")} />
+                        </div>
                     </div>
-                </form>
+                </div>
             </DialogContent>
         </Dialog>
     );
