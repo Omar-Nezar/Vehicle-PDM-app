@@ -18,6 +18,7 @@ import { RotateCcwKey } from "lucide-react"
 import { useAppDispatch, useAppSelector } from "src/store/hooks";
 import { forgotPassword } from "src/slices/authSlice";
 import showToast from "./Toast"
+import LoadingButton from "./LoadingButton";
 
 export default function ForgotPassword() {
     const [email, setEmail] = useState("");
@@ -73,13 +74,9 @@ export default function ForgotPassword() {
                             />
                         </div>
 
-                        <Button
-                            type="submit"
-                            className="w-full h-11 cursor-pointer"
-                            disabled={loading}
-                        >
-                            {loading ? "Sending..." : "Reset Password"}
-                        </Button>
+                        <LoadingButton className="w-full cursor-pointer" type="submit" loading={loading} loadingChildren="Sending...">
+                            Reset Password
+                        </LoadingButton>
                     </form>
 
                     <div className="my-6 flex items-center gap-3">

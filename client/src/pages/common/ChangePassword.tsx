@@ -11,6 +11,7 @@ import showToast from "./Toast";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import LoadingButton from "./LoadingButton";
 
 
 type PasswordFormProps = {
@@ -81,10 +82,10 @@ export default function PasswordForm({ onBack }: PasswordFormProps) {
                 Back
             </Button>
             <div className="flex justify-end">
-                <Button type="submit" disabled={loading}>
+                <LoadingButton className="w-1/2 cursor-pointer" type="submit" loading={loading} loadingChildren="Updating Password...">
                     Update Password
-                </Button>
+                </LoadingButton>
             </div>
-        </form>
+        </form >
     );
 }

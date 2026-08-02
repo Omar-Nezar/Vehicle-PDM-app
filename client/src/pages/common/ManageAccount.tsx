@@ -19,6 +19,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { updateUserSchema } from "@schemas/updateUser.schema";
 
 import ChangePassword from "./ChangePassword";
+import LoadingButton from "./LoadingButton";
 
 type Props = {
     open: boolean;
@@ -86,8 +87,10 @@ export default function AccountModal({ open, onOpenChange }: Props) {
 
                 <div className="overflow-hidden">
                     <div
-                        className={`flex w-[200%] transition-transform duration-500 ease-in-out ${view === "account" ? "translate-x-0" : "-translate-x-1/2"
-                            }`}
+                        className={`flex w-[200%] transition-transform duration-500 ease-in-out 
+                            ${view === "account"
+                                ? "translate-x-0"
+                                : "-translate-x-1/2"}`}
                     >
 
                         {/* ================= ACCOUNT VIEW ================= */}
@@ -126,7 +129,7 @@ export default function AccountModal({ open, onOpenChange }: Props) {
                                     onClick={() => setView("password")}
                                     variant="link" size="sm"
                                     className="cursor-pointer mx-0 p-0"
-                                    disabled = { isEditing }
+                                    disabled={isEditing}
                                 >
                                     Change password
                                 </Button>
@@ -150,9 +153,9 @@ export default function AccountModal({ open, onOpenChange }: Props) {
                                                 Cancel
                                             </Button>
 
-                                            <Button type="submit" disabled={!isDirty || isSubmitting}>
-                                                {isSubmitting ? "Saving..." : "Save"}
-                                            </Button>
+                                            <LoadingButton className="w-1/4 cursor-pointer" type="submit" loading={isSubmitting} loadingChildren="Saving..." disabled={!isDirty}>
+                                                Save
+                                            </LoadingButton>
                                         </>
                                     )}
                                 </div>

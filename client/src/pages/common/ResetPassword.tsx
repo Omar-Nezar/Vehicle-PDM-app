@@ -9,7 +9,6 @@ import { resetPwdSchema, type ResetFormData } from "@schemas/resetPwd.schema";
 
 import showToast from "./Toast";
 
-import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import {
     Card,
@@ -20,6 +19,8 @@ import {
 } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
+
+import LoadingButton from "./LoadingButton";
 
 export default function ResetPassword() {
     const { id, token } = useParams();
@@ -104,13 +105,9 @@ export default function ResetPassword() {
                             </div>
                         </div>
 
-                        <Button
-                            type="submit"
-                            className="w-full h-11"
-                            disabled={loading}
-                        >
-                            {loading ? "Resetting..." : "Reset Password"}
-                        </Button>
+                        <LoadingButton className="w-full cursor-pointer" type="submit" loading={loading} loadingChildren="Resetting...">
+                            Reset Password
+                        </LoadingButton>
                     </form>
                 </CardContent>
             </Card>
