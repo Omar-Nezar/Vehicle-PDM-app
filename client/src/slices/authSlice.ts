@@ -71,7 +71,7 @@ export const updateUser = createAsyncThunk(
             return await updUserRequest(data)
         } catch (err: any) {
             return thunkApi.rejectWithValue(
-                err.response?.data || { message: "Update failed" }
+                err.response?.data?.message || { message: "Update failed" }
             );
         }
     }
