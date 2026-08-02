@@ -1,10 +1,10 @@
 import { type Request, type Response } from "express";
+import { Types } from "mongoose";
 
-import userModel from "../models/userModel.js";
+import userModel, { UserType, type IUser } from "../models/userModel.js";
 import { comparePassword } from "../utils/hash.js"
 import { generateToken, generateResetToken } from "../utils/generate_token.js";
 import { decode, decodeSecret } from "../utils/decode_tokens.js"
-import { type IRefreshToken } from "../types/types.js";
 import { sendEmail } from "../utils/email.js";
 import authHelper from "../utils/authHelper.js";
 
@@ -194,13 +194,21 @@ export const logout = async (req: Request, res: Response) => {
 }
 
 export const forgotPassword = async (req: Request, res: Response) => {
+  // Create a fake user to avoid revealing whether the email exists and maintain consistent response time to thwart timing attacks
+  const fakeUser = new userModel({
+    _id: new Types.ObjectId('000000000000000000000000'),
+    name: 'fake user',
+    email: 'fake@mail.com',
+    type: UserType.CAR_OWNER,
+    password: 'fakepassword',
+    refreshTokens: [],
+    createdAt: new Date(),
+    updatedAt: new Date(),
+  });
+
   const msg = "If user exists, email sent"
   const { email } = req.body;
-
-  const user = await userModel.findOne({ email });
-  if (!user) {
-    return res.status(200).json({ message: msg });
-  }
+  const user = await userModel.findOne({ email }) || fakeUser;
 
   const token = generateResetToken(user);
 
