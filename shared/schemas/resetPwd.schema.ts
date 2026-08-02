@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { userBaseSchema } from "./userBase.schema";
+import { userBaseSchema } from "./userBase.schema.js";
 
 export const resetPwdSchema = userBaseSchema.pick({
     password: true,
