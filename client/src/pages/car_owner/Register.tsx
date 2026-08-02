@@ -18,6 +18,7 @@ import { Separator } from "@/components/ui/separator"
 import { registerUser } from "../../slices/authSlice";
 import { useAppDispatch } from "../../store/hooks";
 import { registerSchema } from "@schemas/user.schema";
+import LoadingButton from "../common/LoadingButton";
 import showToast from "../common/Toast";
 
 export default function Register() {
@@ -50,7 +51,7 @@ export default function Register() {
         showToast({ promise, message: "Registration Successful", description: "You have been logged in automatically" })
 
         await promise
-        navigate("/carownerhome")
+        // navigate("/carownerhome")
     };
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">
@@ -166,9 +167,9 @@ export default function Register() {
                             </div>
                         </div>
 
-                        <Button className="w-full h-11 cursor-pointer" type="submit" disabled={isSubmitting}>
+                        <LoadingButton className="w-full h-11 cursor-pointer" type="submit" loading={isSubmitting} loadingChildren="Creating account...">
                             Create Account
-                        </Button>
+                        </LoadingButton>
                     </form>
 
                     <div className="my-6 flex items-center gap-3">
