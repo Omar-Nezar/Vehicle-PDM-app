@@ -7,8 +7,10 @@ import { decode, decodeSecret } from "../utils/decode_tokens.js"
 import { type IRefreshToken } from "../types/types.js";
 import { sendEmail } from "../utils/email.js";
 
+// Schemas
 import { registerSchema } from "@shared/schemas/user.schema.js";
 import { resetPwdSchema } from "@shared/schemas/resetPwd.schema.js"
+import { changePwdSchema } from "@shared/schemas/changePwd.schema.js"
 
 // Register
 export const registerUser = async (req: Request, res: Response) => {
@@ -282,5 +284,46 @@ export const resetPassword = async (req: Request, res: Response) => {
 
   } catch (err) {
     return res.status(400).json({ message: "Invalid or expired token" });
+  }
+};
+
+export const changePassword = async (req: Request, res: Response) => {
+  try {
+    if (!req.user) {
+      return res.status(401).json({ message: "Unauthorized" });
+    }
+
+    const { oldPassword, password } = req.body;
+
+    // Validate input
+    const parsed = changePwdSchema.safeParse(req.body);
+
+    if (!parsed.success) {
+      return res.status(400).json({
+        errors: parsed.error.issues,
+      });
+    }
+
+    const user = await userModel.findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    // Check old password
+    const isMatch = await comparePassword(oldPassword, user.password);
+
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password is incorrect" });
+    }
+
+    user.password = password;
+
+    await user.save();
+
+    res.status(200).json({ message: "Password updated successfully" });
+
+  } catch (err) {
+    res.status(500).json({ message: "Failed to change password" });
   }
 };

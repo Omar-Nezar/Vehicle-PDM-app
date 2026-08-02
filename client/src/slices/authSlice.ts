@@ -6,8 +6,10 @@ import {
     updUserRequest,
     forgotPasswordRequest,
     resetPasswordRequest,
+    changePasswordRequest,
     type LoginPayload,
     type RegisterPayload,
+    type ChangePasswordPayload
 } from "./api/authApi";
 
 interface AuthState {
@@ -96,6 +98,19 @@ export const resetPassword = createAsyncThunk(
         } catch (err: any) {
             return thunkApi.rejectWithValue(
                 err.response?.data?.message || "Reset failed"
+            );
+        }
+    }
+);
+
+export const changePassword = createAsyncThunk(
+    "auth/changePassword",
+    async (data: ChangePasswordPayload, thunkApi) => {
+        try {
+            return await changePasswordRequest(data);
+        } catch (err: any) {
+            return thunkApi.rejectWithValue(
+                err.response?.data?.message || { message: "Password change failed" }
             );
         }
     }
@@ -198,6 +213,21 @@ const authSlice = createSlice({
                 state.msg = action.payload.message;
             })
             .addCase(resetPassword.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string;
+            });
+        // CHANGE PASSWORD
+        builder
+            .addCase(changePassword.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(changePassword.fulfilled, (state, action) => {
+                state.loading = false;
+                state.error = null;
+                state.msg = action.payload.message;
+            })
+            .addCase(changePassword.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });

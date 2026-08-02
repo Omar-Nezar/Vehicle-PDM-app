@@ -13,6 +13,12 @@ export interface RegisterPayload {
   confirmPassword: string;
 }
 
+export interface ChangePasswordPayload {
+  oldPassword: string;
+  password: string;
+  confirmPassword: string;
+}
+
 export const loginRequest = async (data: LoginPayload) => {
   const res = await API.post("/auth/login", data);
   return res.data;
@@ -41,4 +47,9 @@ export const forgotPasswordRequest = async (data: { email: string }) => {
 export const resetPasswordRequest = async (data: { id: string; token: string; password: string; confirmPassword: string }) => {
   const res = await API.post(`/auth/resetpassword/${data.id}/${data.token}`, { password: data.password, confirmPassword: data.confirmPassword });
   return res.data
+}
+
+export const changePasswordRequest = async (data: ChangePasswordPayload) => {
+  const res = await API.post(`/auth/changepassword`, data);
+  return res.data;
 }
