@@ -34,6 +34,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
+import LoadingButton from "../common/LoadingButton";
 
 type AddCarModalProps = {
     children: React.ReactElement;
@@ -47,8 +48,7 @@ export default function AddCarModal({
     car,
 }: AddCarModalProps) {
     const dispatch = useAppDispatch();
-    const { loading } = useAppSelector((state: RootState) => state.car);
-    console.log(loading)
+    const { auxLoading } = useAppSelector((state: RootState) => state.car);
 
     const [open, setOpen] = useState(false);
 
@@ -232,15 +232,9 @@ export default function AddCarModal({
                         )}
                     </div>
 
-                    <Button type="submit" className="w-full" disabled={loading}>
-                        {loading
-                            ? mode === "edit"
-                                ? "Saving..."
-                                : "Adding..."
-                            : mode === "edit"
-                                ? "Save Changes"
-                                : "Add Vehicle"}
-                    </Button>
+                    <LoadingButton className="w-full h-11 cursor-pointer" type="submit" loading={auxLoading} loadingChildren={mode === "edit" ? "Editing..." : "Adding..."}>
+                        {mode === "edit" ? "Edit Car" : "Add Car"}
+                    </LoadingButton>
                 </form>
             </DialogContent>
         </Dialog>
