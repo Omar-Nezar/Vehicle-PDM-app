@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 import { type IUser } from "../models/userModel.js";
+import { type SignOptions } from "jsonwebtoken";
 
 type tokenPayload = {
   _id: string;
@@ -12,11 +13,22 @@ export const generateToken = (
   payload: tokenPayload,
   use: string = "user"
 ) => {
-  if (use === "user") {
-    return jwt.sign(payload, process.env.JWT_SECRET as string, { expiresIn: "1h", });
-  } else {
-    return jwt.sign(payload, process.env.JWT_REFRESH_SECRET as string, { expiresIn: "4h", })
+  const secret: string | undefined =
+    use === "user"
+      ? process.env.JWT_SECRET
+      : process.env.JWT_REFRESH_SECRET;
+  const expiresIn: string | undefined =
+    use === "user"
+      ? process.env.JWT_SECRET_EXPIRES
+      : process.env.JWT_REFRESH_SECRET_EXPIRES;
+
+  if (!secret || !expiresIn) {
+    throw new Error("JWT secret or expiration is not configured");
   }
+
+  return jwt.sign(payload, secret as string, {
+    expiresIn,
+  } as SignOptions);
 };
 
 export const generateResetToken = (user: IUser) => {
