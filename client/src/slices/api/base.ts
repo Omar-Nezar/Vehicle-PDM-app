@@ -1,4 +1,9 @@
 import axios from "axios";
+let _store: any;
+
+export const injectStore = (store: any) => {
+  _store = store;
+};
 
 const API = axios.create({
   baseURL: import.meta.env.VITE_API_URL,
@@ -36,6 +41,8 @@ API.interceptors.response.use(
         const newToken = res.data.token;
         console.warn("NewToken: ", newToken)
         localStorage.setItem("authToken", newToken);
+        // SAFE (no circular import)
+        _store?.dispatch({ type: "auth/setToken", payload: { token: newToken, msg: null } });
 
         API.defaults.headers.common.Authorization = `Bearer ${newToken}`;
         originalRequest.headers.Authorization = `Bearer ${newToken}`;
@@ -43,7 +50,7 @@ API.interceptors.response.use(
         return API(originalRequest);
       } catch (refreshError) {
         localStorage.removeItem("authToken");
-        window.location.href = "/login"
+        _store?.dispatch({ type: "auth/setToken", payload: { token: null, msg: "Session expired!" } });
         return Promise.reject(refreshError);
       }
     }

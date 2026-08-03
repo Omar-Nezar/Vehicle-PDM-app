@@ -1,5 +1,5 @@
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom'
-import { useEffect, useRef } from 'react';
+import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { useEffect } from 'react';
 import { Toaster } from "@/components/ui/sonner"
 import showToast from './pages/common/Toast';
 import RequireAuth from "./routes/RequireAuth";
@@ -25,21 +25,18 @@ import ThemeButton from './pages/common/ThemeButton'
 
 function App() {
   const location = useLocation();
-  const hasShown = useRef(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     const state = location.state as any;
 
-    if (state?.msg && !hasShown.current) {
-      hasShown.current = true;
-
+    if (state?.msg) {
       showToast({
         message: state.msg,
         description: state.description,
       });
 
-      // Clear state so it doesn't repeat
-      window.history.replaceState({}, document.title);
+      navigate(location.pathname, { replace: true, state: {} });
     }
   }, [location]);
   return (
