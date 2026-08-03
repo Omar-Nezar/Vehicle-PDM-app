@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 export const brands = ["Nissan"];
-export const models = ["Altima", "Sunny", "X-Trail", "Patrol", "Magnite"]
+export const models = ["Altima", "Sunny", "X-Trail", "Patrol", "Pathfinder"]
 
 export const vehicleSchema = z.object({
   make: z.string().min(1, "Brand is required"),
