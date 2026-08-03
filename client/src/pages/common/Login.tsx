@@ -27,12 +27,13 @@ import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import showToast from "../common/Toast"
 import determineHome from "../../functions/utility/determineHome";
 import LoadingButton from "./LoadingButton";
+import PasswordInput from "./PasswordInput";
 
 export default function Login() {
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
 
-    const { loading, error, token } = useAppSelector(
+    const { loading } = useAppSelector(
         (state: RootState) => state.auth
     );
 
@@ -134,9 +135,8 @@ export default function Login() {
 
                             </div>
 
-                            <Input
+                            <PasswordInput
                                 id="password"
-                                type="password"
                                 placeholder="Enter your password"
                                 value={form.password}
                                 onChange={(e) =>

@@ -7,12 +7,11 @@ import { type ChangeFormData } from "@schemas/changePwd.schema";
 import { useAppDispatch, useAppSelector } from "src/store/hooks";
 import { changePassword } from "src/slices/authSlice";
 import showToast from "./Toast";
+import LoadingButton from "./LoadingButton";
+import PasswordInput from "./PasswordInput";
 
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import LoadingButton from "./LoadingButton";
-
 
 type PasswordFormProps = {
     onBack: () => void;
@@ -39,26 +38,33 @@ export default function PasswordForm({ onBack }: PasswordFormProps) {
     };
 
     return (
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mx-2">
 
             <div className="space-y-2">
                 <Label>Current Password</Label>
-                <Input type="password" {...register("oldPassword")} />
+                <PasswordInput placeholder="Enter your current password" {...register("oldPassword")} />
                 <div
-                    className={`overflow-hidden transition-all duration-300 ${errors.oldPassword ? "max-h-10 opacity-100" : "max-h-0 opacity-0"
-                        }`}
+                    className={`overflow-hidden transition-all duration-300 
+                        ${errors.oldPassword
+                            ? "max-h-10 opacity-100"
+                            : "max-h-0 opacity-0"
+                        }`
+                    }
                 >
                     <p className="text-red-500 text-sm">{errors.oldPassword?.message}</p>
                 </div>
             </div>
 
-
             <div className="space-y-2">
                 <Label>New Password</Label>
-                <Input type="password" {...register("password")} />
+                <PasswordInput placeholder="Enter your new password" {...register("password")} />
                 <div
-                    className={`overflow-hidden transition-all duration-300 ${errors.password ? "max-h-10 opacity-100" : "max-h-0 opacity-0"
-                        }`}
+                    className={`overflow-hidden transition-all duration-300 
+                        ${errors.password
+                            ? "max-h-10 opacity-100"
+                            : "max-h-0 opacity-0"
+                        }`
+                    }
                 >
                     <p className="text-red-500 text-sm">{errors.password?.message}</p>
                 </div>
@@ -66,10 +72,14 @@ export default function PasswordForm({ onBack }: PasswordFormProps) {
 
             <div className="space-y-2">
                 <Label>Confirm Password</Label>
-                <Input type="password" {...register("confirmPassword")} />
+                <PasswordInput placeholder="Retype your password" {...register("confirmPassword")} />
                 <div
-                    className={`overflow-hidden transition-all duration-300 ${errors.confirmPassword ? "max-h-10 opacity-100" : "max-h-0 opacity-0"
-                        }`}
+                    className={`overflow-hidden transition-all duration-300 
+                        ${errors.confirmPassword
+                            ? "max-h-10 opacity-100"
+                            : "max-h-0 opacity-0"
+                        }`
+                    }
                 >
                     <p className="text-red-500 text-sm">{errors.confirmPassword?.message}</p>
                 </div>

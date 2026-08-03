@@ -20,6 +20,7 @@ import { useAppDispatch } from "../../store/hooks";
 import { registerSchema } from "@schemas/user.schema";
 import LoadingButton from "../common/LoadingButton";
 import showToast from "../common/Toast";
+import PasswordInput from "../common/PasswordInput";
 
 export default function Register() {
     const dispatch = useAppDispatch();
@@ -125,9 +126,8 @@ export default function Register() {
 
                             </div>
 
-                            <Input
+                            <PasswordInput
                                 id="password"
-                                type="password"
                                 placeholder="Enter your password"
                                 {...register("password")}
                             />
@@ -135,7 +135,9 @@ export default function Register() {
                                 className={`overflow-hidden transition-all duration-400 ease-in-out 
                                     ${errors.password
                                         ? "max-h-10 opacity-100 mb-1"
-                                        : "max-h-0 opacity-0"}`}
+                                        : "max-h-0 opacity-0"
+                                    }`
+                                }
                             >
                                 <p className="text-red-500 text-sm">{errors.password?.message}</p>
                             </div>
@@ -150,9 +152,8 @@ export default function Register() {
                             </div>
 
                             <div>
-                                <Input
+                                <PasswordInput
                                     id="confirmPassword"
-                                    type="password"
                                     placeholder="Retype your password"
                                     {...register("confirmPassword")}
                                 />

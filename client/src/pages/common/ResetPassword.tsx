@@ -9,7 +9,6 @@ import { resetPwdSchema, type ResetFormData } from "@schemas/resetPwd.schema";
 
 import showToast from "./Toast";
 
-import { Input } from "@/components/ui/input";
 import {
     Card,
     CardContent,
@@ -21,6 +20,7 @@ import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 
 import LoadingButton from "./LoadingButton";
+import PasswordInput from "./PasswordInput";
 
 export default function ResetPassword() {
     const { id, token } = useParams();
@@ -80,7 +80,7 @@ export default function ResetPassword() {
                         {/* Password */}
                         <div className="space-y-2">
                             <Label>Password</Label>
-                            <Input type="password" {...register("password")} />
+                            <PasswordInput placeholder="Enter your new password" {...register("password")} />
                             <div
                                 className={`overflow-hidden transition-all duration-400 ease-in-out 
                                     ${errors.password
@@ -94,7 +94,7 @@ export default function ResetPassword() {
                         {/* Confirm Password */}
                         <div className="space-y-2">
                             <Label>Confirm Password</Label>
-                            <Input type="password" {...register("confirmPassword")} />
+                            <PasswordInput placeholder="Retype your password" {...register("confirmPassword")} />
                             <div
                                 className={`overflow-hidden transition-all duration-400 ease-in-out 
                                     ${errors.confirmPassword
