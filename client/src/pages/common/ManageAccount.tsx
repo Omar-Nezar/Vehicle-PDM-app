@@ -34,6 +34,12 @@ export default function AccountModal({ open, onOpenChange }: Props) {
     const [view, setView] = useState<"account" | "password">("account");
     const dispatch = useAppDispatch();
 
+    const displayType: { [key: string]: string } = {
+        car_owner: "Car Owner",
+        admin: "Admin",
+        inventory_manager: "Inventory Manager",
+    }
+
     // Memoize decoded token so reference remains stable across renders
     const user = useMemo(() => decodeToken(), []);
 
@@ -94,8 +100,8 @@ export default function AccountModal({ open, onOpenChange }: Props) {
                     >
 
                         {/* ================= ACCOUNT VIEW ================= */}
-                        <div className="w-1/2 pr-2">
-                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+                        <div className="w-1/2">
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-4 mx-2">
 
                                 {/* Name */}
                                 <div className="space-y-2">
@@ -103,8 +109,12 @@ export default function AccountModal({ open, onOpenChange }: Props) {
                                     <Input {...register("name")} disabled={!isEditing} />
                                 </div>
                                 <div
-                                    className={`origin-top transition-all duration-300 ${errors.name ? "scale-y-100 opacity-100" : "scale-y-0 opacity-0"
-                                        }`}
+                                    className={`origin-top transition-all duration-300 
+                                        ${errors.name
+                                            ? "scale-y-100 opacity-100"
+                                            : "scale-y-0 opacity-0"
+                                        }`
+                                    }
                                 >
                                     <p className="text-red-500 text-sm mt-1">
                                         {errors.name?.message}
@@ -120,7 +130,7 @@ export default function AccountModal({ open, onOpenChange }: Props) {
                                 {/* Role */}
                                 <div className="space-y-2">
                                     <Label>Role</Label>
-                                    <Input value={user?.type || ""} disabled />
+                                    <Input value={displayType[user?.type || ""] || ""} disabled />
                                 </div>
 
                                 {/* Change password link */}
@@ -163,7 +173,7 @@ export default function AccountModal({ open, onOpenChange }: Props) {
                         </div>
 
                         {/* ================= PASSWORD VIEW ================= */}
-                        <div className="w-1/2 pl-2">
+                        <div className="w-1/2">
                             <ChangePassword onBack={() => setView("account")} />
                         </div>
                     </div>
