@@ -253,7 +253,6 @@ export const resetPassword = async (req: Request, res: Response) => {
     const decoded = decodeSecret(token as string, secret);
 
     user.password = req.body.password;
-    console.log("Password reset successful for user:", user.email, user.password, req.body.password);
     await user.save();
 
     res.status(200).json({ message: "Password reset successful" });
