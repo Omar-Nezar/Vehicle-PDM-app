@@ -41,7 +41,7 @@ API.interceptors.response.use(
         const newToken = res.data.token;
         console.warn("NewToken: ", newToken)
         localStorage.setItem("authToken", newToken);
-        // SAFE (no circular import)
+
         _store?.dispatch({ type: "auth/setToken", payload: { token: newToken, msg: null } });
 
         API.defaults.headers.common.Authorization = `Bearer ${newToken}`;
