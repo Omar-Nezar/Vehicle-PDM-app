@@ -102,7 +102,7 @@ export default function AuditLogs() {
                                     <TableCell className="text-foreground">
                                         <Popover>
                                             <PopoverTrigger render={
-                                                <Button variant="link" size="sm" className="cursor-pointer text-blue-500" disabled={!log.body}>
+                                                <Button variant="link" size="sm" className="cursor-pointer text-blue-500 pl-0" disabled={!log.body}>
                                                     View
                                                 </Button>
                                             }>
