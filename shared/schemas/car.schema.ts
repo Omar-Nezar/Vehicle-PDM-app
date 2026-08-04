@@ -21,8 +21,8 @@ export const vehicleSchema = z.object({
     .max(10, "Too long")
     .transform((val) => val.toUpperCase()),
 
-  vin: z.
-    string()
+  vin: z
+    .string()
     .min(1, "VIN is required")
     .length(17, "VIN should be 17 characters long"),
 });

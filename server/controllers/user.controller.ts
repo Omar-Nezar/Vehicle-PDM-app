@@ -1,6 +1,7 @@
 import { type Request, type Response } from "express";
 
 import userModel from "../models/userModel.js";
+import auditModel from "../models/auditModel.js";
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -30,5 +31,20 @@ export const deleteUser = async (req: Request, res: Response) => {
     res.status(200).json({ message: "User deleted successfully" });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getAuditLogs = async (req: Request, res: Response) => {
+  try {
+    const logs = await auditModel.find().sort({ createdAt: -1 });
+    return res.status(200).json({
+      message: "Audit logs fetched successfully",
+      logs,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      message: "Server error",
+    });
   }
 };

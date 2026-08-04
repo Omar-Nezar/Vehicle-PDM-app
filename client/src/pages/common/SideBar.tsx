@@ -21,7 +21,18 @@ import {
     DropdownMenuSeparator,
 } from "@/components/ui/dropdown-menu"
 
-import { Home, Users, User, CarFront, LogOut, Bell, ChevronsUpDown, BadgeCheck } from "lucide-react";
+import {
+    Home,
+    Users,
+    User,
+    CarFront,
+    LogOut,
+    Bell,
+    ChevronsUpDown,
+    BadgeCheck,
+    ClipboardClock
+} from "lucide-react";
+
 import { NavLink } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
@@ -93,6 +104,11 @@ export default function AppSidebar() {
                     label: "Manage Users",
                     to: "/manageusers",
                     icon: Users,
+                },
+                {
+                    label: "Audit Logs",
+                    to: "/auditlogs",
+                    icon: ClipboardClock,
                 },
             ],
         },

@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getUsersRequest, delUserRequest } from "./api/userApi";
+import { getUsersRequest, delUserRequest, getAuditLogsRequest } from "./api/userApi";
 
 export const delUser = createAsyncThunk(
     "users/delUser",
@@ -29,6 +29,19 @@ export const getUsers = createAsyncThunk(
     }
 );
 
+export const fetchAuditLogs = createAsyncThunk(
+    "audit/fetchLogs",
+    async (_, thunkAPI) => {
+        try {
+            return await getAuditLogsRequest();
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Audit Logs Fetch Failed"
+            );
+        }
+    }
+);
+
 type User = {
     _id: string;
     name: string;
@@ -36,11 +49,25 @@ type User = {
     type: string;
 };
 
+export interface AuditLog {
+    _id: string;
+    userId?: string;
+    method: string;
+    route: string;
+    statusCode: number;
+    body?: any;
+    ip?: string;
+    userAgent?: string;
+    durationMs?: number;
+    createdAt: string;
+}
+
 type State = {
     users: User[];
     loading: boolean;
     delLoading: boolean;
     error: string | null;
+    logs: AuditLog[];
 };
 
 const initialState: State = {
@@ -48,6 +75,7 @@ const initialState: State = {
     loading: false,
     delLoading: false,
     error: null,
+    logs: [],
 };
 
 const userSlice = createSlice({
@@ -83,6 +111,19 @@ const userSlice = createSlice({
             })
             .addCase(delUser.rejected, (state, action) => {
                 state.delLoading = false;
+                state.error = action.payload as string;
+            });
+        builder
+            // AUDIT
+            .addCase(fetchAuditLogs.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(fetchAuditLogs.fulfilled, (state, action) => {
+                state.loading = false;
+                state.logs = action.payload.logs;
+            })
+            .addCase(fetchAuditLogs.rejected, (state, action) => {
+                state.loading = false;
                 state.error = action.payload as string;
             });
     },

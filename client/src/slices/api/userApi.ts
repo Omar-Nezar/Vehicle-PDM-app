@@ -9,3 +9,8 @@ export const delUserRequest = async (_id: string) => {
   const res = await API.delete(`/user/deluser/${_id}`)
   return res.data
 }
+
+export const getAuditLogsRequest = async () => {
+  const res = await API.get("/user/getlogs");
+  return res.data;
+}

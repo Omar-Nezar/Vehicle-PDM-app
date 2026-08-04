@@ -19,6 +19,7 @@ import ManageCars from './pages/car_owner/ManageCars'
 // Admin
 import AdminHome from './pages/admin/AdminHome'
 import ManageUsers from './pages/admin/ManageUsers'
+import AuditLogs from './pages/admin/AuditLogs'
 
 // Aux
 import ThemeButton from './pages/common/ThemeButton'
@@ -61,6 +62,7 @@ function App() {
           <Route element={<RequireRole role="admin" />}>
             <Route path="/adminhome" element={<AdminHome />} />
             <Route path="/manageUsers" element={<ManageUsers />} />
+            <Route path="/auditlogs" element={<AuditLogs />} />
           </Route>
         </Route>
       </Routes>

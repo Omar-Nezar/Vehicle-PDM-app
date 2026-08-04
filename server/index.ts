@@ -8,6 +8,8 @@ import authRoutes from "./routes/auth.routes.js";
 import userRoutes from "./routes/user.routes.js";
 import carRoutes from "./routes/car.routes.js"
 
+import { auditMiddleware } from "./middleware/auditMiddleware.js";
+
 dotenv.config();
 
 const app = express();
@@ -15,10 +17,10 @@ const app = express();
 app.use(cookieParser());
 
 app.use(
-  cors({
-    origin: "http://localhost:5173", // frontend URL
-    credentials: true,               
-  })
+    cors({
+        origin: "http://localhost:5173", // frontend URL
+        credentials: true,
+    })
 );
 app.use(express.json());
 
@@ -38,6 +40,9 @@ try {
 } catch (error) {
     console.error("Error connecting to MongoDB:", error);
 }
+
+// Middleware
+app.use(auditMiddleware);
 
 // routes
 app.use("/auth", authRoutes);
