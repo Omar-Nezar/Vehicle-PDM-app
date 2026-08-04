@@ -187,9 +187,9 @@ export const logout = async (req: Request, res: Response) => {
     );
 
     res.clearCookie("refreshToken");
-    res.status(200).json({ message: "Logged out" });
+    return res.status(200).json({ message: "Logged out" });
   } catch (err) {
-    res.status(500).json({ message: "Logout failed" });
+    return res.status(500).json({ message: "Logout failed" });
   }
 }
 
