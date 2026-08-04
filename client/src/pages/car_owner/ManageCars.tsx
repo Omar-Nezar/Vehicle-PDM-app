@@ -16,7 +16,16 @@ import {
     CardTitle,
 } from "@/components/ui/card";
 
+import { Badge } from "@/components/ui/badge";
+import { Separator } from "@/components/ui/separator";
+
 import { Trash2, Pencil, Plus } from "lucide-react";
+
+import Altima from "src/assets/Altima.png";
+import Sunny from "src/assets/Sunny.png";
+import XTrail from "src/assets/X-Trail.png";
+import Patrol from "src/assets/Patrol.png";
+import Pathfinder from "src/assets/Pathfinder.png";
 
 export default function ManageCars() {
     const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -45,6 +54,14 @@ export default function ManageCars() {
         } finally {
             setDeletingId(null);
         }
+    };
+
+    const carImages: Record<string, string> = {
+        Altima,
+        Sunny,
+        "X-Trail": XTrail,
+        Patrol,
+        Pathfinder,
     };
 
     return (
@@ -85,14 +102,24 @@ export default function ManageCars() {
                     </div>
                 ) : (< div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
                     {cars.map((car) => (
-                        <Card key={car._id} className="shadow-md hover:shadow-lg transition">
-                            <CardHeader>
+                        <Card key={car._id} className="relative w-full max-w-sm pt-0 bg-card">
+                            <div className="aspect-video w-full bg-linear-to-r from-muted to-background flex items-center justify-center overflow-hidden">
+                                <img
+                                    src={carImages[car.model] || Altima}
+                                    alt={car.model}
+                                    className="max-h-full max-w-full object-contain transition-transform duration-300 hover:scale-105"
+                                />
+                            </div>
+                            <CardHeader className="text-center">
                                 <CardTitle>
-                                    {car.make} {car.model}
+                                    <Badge className="text-md">
+                                        {car.make} {car.model}
+                                    </Badge>
                                 </CardTitle>
                             </CardHeader>
+                            <Separator />
 
-                            <CardContent className="space-y-2 text-sm text-muted-foreground">
+                            <CardContent className="space-y-2 text-sm text-muted-foreground ml-2">
                                 <p><strong>Year:</strong> {car.year}</p>
                                 <p><strong>Plate:</strong> {car.plateNumber}</p>
                                 <p><strong>Mileage:</strong> {car.mileage} km</p>
