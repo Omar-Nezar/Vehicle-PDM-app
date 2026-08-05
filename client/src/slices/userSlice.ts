@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getUsersRequest, delUserRequest, getAuditLogsRequest } from "./api/userApi";
+import { getUsersRequest, getUserCarsRequest, delUserRequest, getAuditLogsRequest } from "./api/userApi";
 
 export const delUser = createAsyncThunk(
     "users/delUser",
@@ -29,6 +29,19 @@ export const getUsers = createAsyncThunk(
     }
 );
 
+export const getUserCars = createAsyncThunk(
+    "admin/fetchUserCars",
+    async (userId: string, thunkAPI) => {
+        try {
+            return await getUserCarsRequest(userId);
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "User Cars Fetch Failed"
+            );
+        }
+    }
+);
+
 export const fetchAuditLogs = createAsyncThunk(
     "audit/fetchLogs",
     async (_, thunkAPI) => {
@@ -49,6 +62,18 @@ type User = {
     type: string;
 };
 
+type userCar = {
+    owner: string;
+    make: string;
+    model: string;
+    year: number;
+    plateNumber: string;
+    mileage: number;
+    vin: string;
+    createdAt: Date;
+    updatedAt: Date;
+}
+
 export interface AuditLog {
     _id: string;
     userId?: string;
@@ -64,16 +89,20 @@ export interface AuditLog {
 
 type State = {
     users: User[];
+    userCars: { [userId: string]: userCar[] };
     loading: boolean;
     delLoading: boolean;
+    auxLoading: boolean;
     error: string | null;
     logs: AuditLog[];
 };
 
 const initialState: State = {
     users: [],
+    userCars: {},
     loading: false,
     delLoading: false,
+    auxLoading: false,
     error: null,
     logs: [],
 };
@@ -84,7 +113,7 @@ const userSlice = createSlice({
     reducers: {},
     extraReducers: (builder) => {
         builder
-            // GET
+            // GET USERS
             .addCase(getUsers.pending, (state) => {
                 state.loading = true;
                 state.error = null;
@@ -95,6 +124,20 @@ const userSlice = createSlice({
             })
             .addCase(getUsers.rejected, (state, action) => {
                 state.loading = false;
+                state.error = action.payload as string;
+            });
+        builder
+            // GET USER CARS
+            .addCase(getUserCars.pending, (state) => {
+                state.auxLoading = true;
+                state.error = null;
+            })
+            .addCase(getUserCars.fulfilled, (state, action) => {
+                state.auxLoading = false;
+                state.userCars[action.meta.arg] = action.payload.cars;
+            })
+            .addCase(getUserCars.rejected, (state, action) => {
+                state.auxLoading = false;
                 state.error = action.payload as string;
             });
         builder
