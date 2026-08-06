@@ -21,6 +21,7 @@ import { registerSchema } from "@schemas/user.schema";
 import LoadingButton from "../common/LoadingButton";
 import showToast from "../common/Toast";
 import PasswordInput from "../common/PasswordInput";
+import ErrorDiv from "../common/ErrorDiv";
 
 export default function Register() {
     const dispatch = useAppDispatch();
@@ -87,14 +88,7 @@ export default function Register() {
                                 placeholder="Enter your full name"
                                 {...register("name")}
                             />
-                            <div
-                                className={`overflow-hidden transition-all duration-400 ease-in-out 
-                                    ${errors.name
-                                        ? "max-h-10 opacity-100 mb-1"
-                                        : "max-h-0 opacity-0"}`}
-                            >
-                                <p className="text-red-500 text-sm">{errors.name?.message}</p>
-                            </div>
+                            <ErrorDiv message={errors.name?.message} />
                         </div>
 
                         <div className="space-y-2">
@@ -108,14 +102,7 @@ export default function Register() {
                                 placeholder="name@example.com"
                                 {...register("email")}
                             />
-                            <div
-                                className={`overflow-hidden transition-all duration-400 ease-in-out 
-                                    ${errors.email
-                                        ? "max-h-10 opacity-100 mb-1"
-                                        : "max-h-0 opacity-0"}`}
-                            >
-                                <p className="text-red-500 text-sm">{errors.email?.message}</p>
-                            </div>
+                            <ErrorDiv message={errors.name?.message} />
                         </div>
 
                         <div className="space-y-2">
@@ -131,16 +118,7 @@ export default function Register() {
                                 placeholder="Enter your password"
                                 {...register("password")}
                             />
-                            <div
-                                className={`overflow-hidden transition-all duration-400 ease-in-out 
-                                    ${errors.password
-                                        ? "max-h-10 opacity-100 mb-1"
-                                        : "max-h-0 opacity-0"
-                                    }`
-                                }
-                            >
-                                <p className="text-red-500 text-sm">{errors.password?.message}</p>
-                            </div>
+                            <ErrorDiv message={errors.name?.message} />
                         </div>
 
                         <div className="space-y-2">
@@ -157,14 +135,7 @@ export default function Register() {
                                     placeholder="Retype your password"
                                     {...register("confirmPassword")}
                                 />
-                                <div
-                                    className={`overflow-hidden transition-all duration-400 ease-in-out 
-                                        ${errors.confirmPassword
-                                            ? "max-h-10 opacity-100 mt-1"
-                                            : "max-h-0 opacity-0"}`}
-                                >
-                                    <p className="text-red-500 text-sm">{errors.confirmPassword?.message}</p>
-                                </div>
+                                <ErrorDiv message={errors.name?.message} />
                             </div>
                         </div>
 
