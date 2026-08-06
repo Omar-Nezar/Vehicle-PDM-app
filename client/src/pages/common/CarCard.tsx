@@ -34,7 +34,7 @@ type Car = {
 
 type CarCardProps = {
     car: Car;
-    actions?: React.ReactNode; // 👈 optional buttons
+    actions?: React.ReactNode; // optional buttons
     className?: string;
 };
 
