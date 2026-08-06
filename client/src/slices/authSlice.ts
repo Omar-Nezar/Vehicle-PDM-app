@@ -43,7 +43,9 @@ export const logoutUser = createAsyncThunk(
         try {
             return await logoutRequest()
         } catch (err: any) {
-            return thunkAPI.rejectWithValue(err.response?.data || "Logout failed");
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Logout failed"
+            );
         }
     }
 );
@@ -71,7 +73,7 @@ export const updateUser = createAsyncThunk(
             return await updUserRequest(data)
         } catch (err: any) {
             return thunkApi.rejectWithValue(
-                err.response?.data?.message || { message: "Update failed" }
+                err.response?.data?.message || "Update failed"
             );
         }
     }
@@ -110,7 +112,7 @@ export const changePassword = createAsyncThunk(
             return await changePasswordRequest(data);
         } catch (err: any) {
             return thunkApi.rejectWithValue(
-                err.response?.data?.message || { message: "Password change failed" }
+                err.response?.data?.message || "Password change failed"
             );
         }
     }
@@ -130,6 +132,12 @@ const authSlice = createSlice({
         setToken: (state, action) => {
             state.token = action.payload.token;
             state.msg = action.payload.msg;
+        },
+        resetAuth: (state) => {
+            state.token = null
+            state.loading = false
+            state.msg = null
+            state.error = null
         }
     },
     extraReducers: (builder) => {
@@ -239,5 +247,5 @@ const authSlice = createSlice({
     },
 });
 
-export const { setToken } = authSlice.actions;
+export const { setToken, resetAuth } = authSlice.actions;
 export default authSlice.reducer;
