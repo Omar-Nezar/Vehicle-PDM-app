@@ -71,7 +71,15 @@ const UserSchema: Schema<IUser> = new Schema(
 UserSchema.pre("save", async function (this: any) {
     const user = this as any;
 
-    if (!user.isModified("password")) return;
+    // Skip hashing when explicitly requested
+    if (user.$locals.skipPasswordHash) {
+        return;
+    }
+
+    // Only hash if password was modified
+    if (!user.isModified("password")) {
+        return;
+    }
 
     user.password = await hashPassword(user.password);
 });
