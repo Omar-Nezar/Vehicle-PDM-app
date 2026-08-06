@@ -32,11 +32,11 @@ export const generateToken = (
 };
 
 export const generateResetToken = (user: IUser) => {
-  const secret = process.env.JWT_SECRET + user.password;
+  const secret: string = process.env.JWT_SECRET + user.password;
 
   return jwt.sign(
     { id: user._id },
     secret,
-    { expiresIn: "15m" }
+    { expiresIn: process.env.JWT_VERIFY_EXPIRES } as SignOptions
   );
 };
