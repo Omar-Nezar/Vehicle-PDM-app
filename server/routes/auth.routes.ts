@@ -3,6 +3,7 @@ import express from "express";
 import {
     refresh,
     registerUser,
+    verifyRegistration,
     loginUser,
     updateUser,
     logout,
@@ -14,7 +15,10 @@ import { carOwnerOnly, protect } from "../middleware/authMiddleware.js";
 
 const router = express.Router();
 
+// Register
 router.post("/register", registerUser);
+router.get("/verifyregistration/:token", verifyRegistration);
+
 router.post("/login", loginUser);
 router.post("/update", protect, carOwnerOnly, updateUser);
 router.post("/refresh", refresh);

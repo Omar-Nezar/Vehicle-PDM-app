@@ -29,6 +29,11 @@ export const registerRequest = async (data: RegisterPayload) => {
   return res.data;
 };
 
+export const verifyRegistrationRequest = async(token: string) => {
+  const res = await API.get(`/auth/verifyregistration/${token}`)
+  return res.data
+}
+
 export const updUserRequest = async (data: { name: string }) => {
   const res = await API.post(`/auth/update`, data)
   return res.data

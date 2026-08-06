@@ -10,7 +10,6 @@ import Layout from "../common/Layout";
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,

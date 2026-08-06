@@ -7,6 +7,7 @@ import { generateToken, generateResetToken } from "../utils/generate_token.js";
 import { decode, decodeSecret } from "../utils/decode_tokens.js"
 import { sendEmail } from "../utils/email.js";
 import authHelper from "../utils/authHelper.js";
+import tempUserModel from "../models/tempUserModel.js";
 
 // Schemas
 import { registerSchema } from "@shared/schemas/user.schema.js";
@@ -26,6 +27,7 @@ export const registerUser = async (req: Request, res: Response) => {
     }
 
     const { name, email, password, type } = req.body;
+    const user = req.body
 
     // Check if user already exists
     const existingUser = await userModel.findOne({ email });
@@ -36,27 +38,100 @@ export const registerUser = async (req: Request, res: Response) => {
       });
     }
 
-    // Create user
-    const user = await userModel.create({
-      name,
-      email,
-      password: password,
-      type, // optional (defaults if not provided)
+    // Remove previous pending registration
+    await tempUserModel.deleteOne({
+      email
     });
 
-    // Issue tokens and set refresh token cookie (auto-login)
-    const token = await authHelper(user, res);
+    const token = generateResetToken(user)
+
+    await tempUserModel.create({
+      name,
+      email,
+      password,
+      type,
+      token,
+      expiresAt: new Date(
+        Date.now() + 15 * 60 * 1000
+      ),
+    });
+
+    const link = `${process.env.CLIENT_URL}/verifyregistration/${token}`;
+    const message = `
+    Click to verify account:
+    ${link}
+
+    This link expires in 15 minutes.
+  `;
+    await sendEmail({
+      to: email,
+      subject: "Account Verification",
+      text: message,
+    })
+
 
     // Return success response
     return res.status(201).json({
-      message: "Registration successful",
-      token,
+      message: "Verification email sent. Complete registration from your inbox.",
     });
   } catch (error) {
     console.error(error);
 
     return res.status(500).json({
       message: "Server error",
+    });
+  }
+};
+
+export const verifyRegistration = async (req: Request<{ token: string }>, res: Response) => {
+  try {
+    const { token } = req.params;
+
+    const pending =
+      await tempUserModel.findOne({
+        token,
+        expiresAt: {
+          $gt: new Date()
+        }
+      });
+
+
+    if (!pending) {
+      return res.status(400).json({
+        message: "Invalid or expired link"
+      });
+    }
+
+
+    // create actual account
+    const user = new userModel({
+      name: pending.name,
+      email: pending.email,
+      password: pending.password,
+    });
+
+    // Skip password hashing (password is already hashed)
+    user.$locals.skipPasswordHash = true;
+
+    await user.save();
+
+
+    await tempUserModel.deleteOne({
+      _id: pending._id
+    });
+
+    // Issue tokens and set refresh token cookie (auto-login)
+    const authToken = await authHelper(user, res);
+
+    return res.status(200).json({
+      message: "Registration successful",
+      token: authToken
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({
+      message: "Server error"
     });
   }
 };

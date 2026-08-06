@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import {
     loginRequest,
     registerRequest,
+    verifyRegistrationRequest,
     logoutRequest,
     updUserRequest,
     forgotPasswordRequest,
@@ -54,10 +55,7 @@ export const registerUser = createAsyncThunk(
     "auth/register",
     async (data: RegisterPayload, thunkAPI) => {
         try {
-            const res = await registerRequest(data);
-            const token = res.token
-            localStorage.setItem("authToken", token);
-            return res;
+            return await registerRequest(data);
         } catch (err: any) {
             return thunkAPI.rejectWithValue(
                 err.response?.data?.message || "Registration failed"
@@ -65,6 +63,22 @@ export const registerUser = createAsyncThunk(
         }
     }
 );
+
+export const verifyRegistration = createAsyncThunk(
+    "auth/verifyRegistration",
+    async (token: string, thunkApi) => {
+        try {
+            const res = await verifyRegistrationRequest(token)
+            const authToken = res.token
+            localStorage.setItem("authToken", authToken);
+            return res;
+        } catch (err: any) {
+            return thunkApi.rejectWithValue(
+                err.response?.data?.message || "Registration verification failed"
+            )
+        }
+    }
+)
 
 export const updateUser = createAsyncThunk(
     "auth/updateUser",
@@ -163,9 +177,22 @@ const authSlice = createSlice({
             })
             .addCase(registerUser.fulfilled, (state, action) => {
                 state.loading = false;
-                state.token = action.payload.token;
             })
             .addCase(registerUser.rejected, (state, action: any) => {
+                state.loading = false;
+                state.error = action.payload;
+            });
+        // Register verification
+        builder
+            .addCase(verifyRegistration.pending, (state) => {
+                state.loading = true;
+                state.error = null;
+            })
+            .addCase(verifyRegistration.fulfilled, (state, action) => {
+                state.loading = false;
+                state.token = action.payload.token;
+            })
+            .addCase(verifyRegistration.rejected, (state, action: any) => {
                 state.loading = false;
                 state.error = action.payload;
             });

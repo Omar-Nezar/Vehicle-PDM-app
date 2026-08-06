@@ -50,10 +50,9 @@ export default function Register() {
             confirmPassword: data.confirmPassword
         })).unwrap();
 
-        showToast({ promise, message: "Registration Successful", description: "You have been logged in automatically" })
+        showToast({ promise, message: "Please check your email", description: "Please verify your email to complete registration" })
 
         await promise
-        navigate("/carownerhome")
     };
     return (
         <div className="flex min-h-screen items-center justify-center bg-muted/40 px-4">

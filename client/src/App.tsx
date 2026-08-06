@@ -11,6 +11,7 @@ import Login from './pages/common/Login'
 import Register from './pages/car_owner/Register'
 import ForgotPassword from './pages/common/ForgotPassword'
 import ResetPassword from './pages/common/ResetPassword'
+import VerifyRegistration from './pages/car_owner/VerifyRegistration';
 
 // Car Owner
 import CarOwnerHome from './pages/car_owner/carOwnerHome'
@@ -49,6 +50,7 @@ function App() {
           <Route path="/forgotpassword" element={<ForgotPassword />} />
           <Route path="/resetpassword/:id/:token" element={<ResetPassword />} />
           <Route path="/register" element={<Register />} />
+          <Route path="/verifyregistration/:token" element={<VerifyRegistration />} />
         </Route>
 
         <Route element={<RequireAuth />}>
