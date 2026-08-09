@@ -1,4 +1,4 @@
-import { Link, useNavigate } from "react-router-dom"
+import { Link } from "react-router-dom"
 import { useForm } from "react-hook-form";
 import { CircleUserRound } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -25,7 +25,6 @@ import ErrorDiv from "../common/ErrorDiv";
 
 export default function Register() {
     const dispatch = useAppDispatch();
-    const navigate = useNavigate();
 
     type RegisterFormData = {
         name: string;
@@ -50,7 +49,7 @@ export default function Register() {
             confirmPassword: data.confirmPassword
         })).unwrap();
 
-        showToast({ promise, message: "Please check your email", description: "Please verify your email to complete registration" })
+        showToast({ promise, message: "Please check your email", description: "Please verify your email to complete registration", duration: 10000 })
 
         await promise
     };
