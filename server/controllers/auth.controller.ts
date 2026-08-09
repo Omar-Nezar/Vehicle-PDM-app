@@ -2,6 +2,7 @@ import { type Request, type Response } from "express";
 import { Types } from "mongoose";
 
 import userModel, { UserType, type IUser } from "../models/userModel.js";
+import behaviourModel from "../models/behaviourModel.js";
 import { comparePassword } from "../utils/hash.js"
 import { generateToken, generateResetToken } from "../utils/generate_token.js";
 import { decode, decodeSecret } from "../utils/decode_tokens.js"
@@ -112,6 +113,11 @@ export const verifyRegistration = async (req: Request<{ token: string }>, res: R
 
     // Skip password hashing (password is already hashed)
     user.$locals.skipPasswordHash = true;
+
+    // Create default behaviour record
+    await behaviourModel.create({
+      user: user._id,
+    });
 
     await user.save();
 
