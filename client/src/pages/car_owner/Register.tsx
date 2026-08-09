@@ -101,7 +101,7 @@ export default function Register() {
                                 placeholder="name@example.com"
                                 {...register("email")}
                             />
-                            <ErrorDiv message={errors.name?.message} />
+                            <ErrorDiv message={errors.email?.message} />
                         </div>
 
                         <div className="space-y-2">
@@ -117,7 +117,7 @@ export default function Register() {
                                 placeholder="Enter your password"
                                 {...register("password")}
                             />
-                            <ErrorDiv message={errors.name?.message} />
+                            <ErrorDiv message={errors.password?.message} />
                         </div>
 
                         <div className="space-y-2">
@@ -134,7 +134,7 @@ export default function Register() {
                                     placeholder="Retype your password"
                                     {...register("confirmPassword")}
                                 />
-                                <ErrorDiv message={errors.name?.message} />
+                                <ErrorDiv message={errors.confirmPassword?.message} />
                             </div>
                         </div>
 
