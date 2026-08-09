@@ -9,6 +9,9 @@ export enum UserType {
     INVENTORY_MANAGER = "inventory_manager",
 }
 
+export enum DrivingStyle { AGGRESSIVE = "Aggressive", CALM = "Calm", }
+export enum Diligence { DILIGENT = "Diligent", IRRESPONSIBLE = "Irresponsible", }
+
 // TypeScript interface
 export interface IUser extends Document {
     _id: Types.ObjectId;
@@ -16,6 +19,8 @@ export interface IUser extends Document {
     email: string;
     password: string;
     type: UserType;
+    driving_style: DrivingStyle;
+    diligence: Diligence;
     refreshTokens: IRefreshToken[];
     createdAt: Date;
     updatedAt: Date;
@@ -53,6 +58,16 @@ const UserSchema: Schema<IUser> = new Schema(
             type: String,
             enum: Object.values(UserType),
             default: UserType.CAR_OWNER,
+        },
+        driving_style: {
+            type: String,
+            enum: Object.values(DrivingStyle),
+            default: DrivingStyle.CALM,
+        },
+        diligence: {
+            type: String,
+            enum: Object.values(Diligence),
+            default: Diligence.DILIGENT,
         },
         refreshTokens: [
             {
