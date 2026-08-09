@@ -9,6 +9,7 @@ import { changePassword } from "src/slices/authSlice";
 import showToast from "./Toast";
 import LoadingButton from "./LoadingButton";
 import PasswordInput from "./PasswordInput";
+import ErrorDiv from "./ErrorDiv";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -43,46 +44,19 @@ export default function PasswordForm({ onBack }: PasswordFormProps) {
             <div className="space-y-2">
                 <Label>Current Password</Label>
                 <PasswordInput placeholder="Enter your current password" {...register("oldPassword")} />
-                <div
-                    className={`overflow-hidden transition-all duration-300 
-                        ${errors.oldPassword
-                            ? "max-h-10 opacity-100"
-                            : "max-h-0 opacity-0"
-                        }`
-                    }
-                >
-                    <p className="text-red-500 text-sm">{errors.oldPassword?.message}</p>
-                </div>
+                <ErrorDiv message={errors.password?.message} />
             </div>
 
             <div className="space-y-2">
                 <Label>New Password</Label>
                 <PasswordInput placeholder="Enter your new password" {...register("password")} />
-                <div
-                    className={`overflow-hidden transition-all duration-300 
-                        ${errors.password
-                            ? "max-h-10 opacity-100"
-                            : "max-h-0 opacity-0"
-                        }`
-                    }
-                >
-                    <p className="text-red-500 text-sm">{errors.password?.message}</p>
-                </div>
+                <ErrorDiv message={errors.password?.message} />
             </div>
 
             <div className="space-y-2">
                 <Label>Confirm Password</Label>
                 <PasswordInput placeholder="Retype your password" {...register("confirmPassword")} />
-                <div
-                    className={`overflow-hidden transition-all duration-300 
-                        ${errors.confirmPassword
-                            ? "max-h-10 opacity-100"
-                            : "max-h-0 opacity-0"
-                        }`
-                    }
-                >
-                    <p className="text-red-500 text-sm">{errors.confirmPassword?.message}</p>
-                </div>
+                <ErrorDiv message={errors.confirmPassword?.message} />
             </div>
 
             {/* Actions */}

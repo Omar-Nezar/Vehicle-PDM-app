@@ -8,6 +8,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { resetPwdSchema, type ResetFormData } from "@schemas/resetPwd.schema";
 
 import showToast from "./Toast";
+import ErrorDiv from "./ErrorDiv";
 
 import {
     Card,
@@ -81,28 +82,14 @@ export default function ResetPassword() {
                         <div className="space-y-2">
                             <Label>Password</Label>
                             <PasswordInput placeholder="Enter your new password" {...register("password")} />
-                            <div
-                                className={`overflow-hidden transition-all duration-400 ease-in-out 
-                                    ${errors.password
-                                        ? "max-h-10 opacity-100 mb-1"
-                                        : "max-h-0 opacity-0"}`}
-                            >
-                                <p className="text-red-500 text-sm">{errors.password?.message}</p>
-                            </div>
+                            <ErrorDiv message={errors.password?.message} />
                         </div>
 
                         {/* Confirm Password */}
                         <div className="space-y-2">
                             <Label>Confirm Password</Label>
                             <PasswordInput placeholder="Retype your password" {...register("confirmPassword")} />
-                            <div
-                                className={`overflow-hidden transition-all duration-400 ease-in-out 
-                                    ${errors.confirmPassword
-                                        ? "max-h-10 opacity-100 mb-1"
-                                        : "max-h-0 opacity-0"}`}
-                            >
-                                <p className="text-red-500 text-sm">{errors.confirmPassword?.message}</p>
-                            </div>
+                            <ErrorDiv message={errors.confirmPassword?.message} />
                         </div>
 
                         <LoadingButton className="w-full cursor-pointer" type="submit" loading={loading} loadingChildren="Resetting...">
