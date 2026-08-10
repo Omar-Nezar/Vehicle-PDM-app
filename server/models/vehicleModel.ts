@@ -1,52 +1,43 @@
-import mongoose, { Schema, Document, Types, type HydratedDocument } from "mongoose";
+import mongoose, {
+    Schema,
+    Types,
+    type Document,
+    type HydratedDocument,
+} from "mongoose";
 
-interface IVehicle {
+export interface IVehicleRegistry extends Document {
     owner: Types.ObjectId;
-    make: string;
-    model: string;
-    year: number;
-    plateNumber: string;
-    mileage: number;
-    vin: string;
+    vehicles: String[];
     createdAt: Date;
     updatedAt: Date;
 }
 
-const vehicleSchema = new Schema<IVehicle>(
+const vehicleRegistrySchema = new Schema<IVehicleRegistry>(
     {
         owner: {
             type: Schema.Types.ObjectId,
             ref: "User",
             required: true,
+            unique: true,
         },
-        make: {
-            type: String,
-            required: true,
-        },
-        model: {
-            type: String,
-            required: true,
-        },
-        year: {
-            type: Number,
-            required: true,
-        },
-        plateNumber: {
-            type: String,
-            required: true,
-        },
-        mileage: {
-            type: Number,
-            required: true,
-        },
-        vin: {
-            type: String,
-            required: true,
-            unique: true
-        }
+
+        vehicles: [
+            {
+                type: String,
+                ref: "Vehicle",
+            },
+        ],
     },
-    { timestamps: true }
+    {
+        timestamps: true,
+        versionKey: false,
+    }
 );
 
-export type VehicleDocument = HydratedDocument<IVehicle>;
-export default mongoose.model<IVehicle>("vehicles", vehicleSchema);
+export type VehicleRegistryDocument = HydratedDocument<IVehicleRegistry>;
+
+export default mongoose.model<IVehicleRegistry>(
+    "vehicle_registry",
+    vehicleRegistrySchema,
+    "vehicle_registry",
+);
