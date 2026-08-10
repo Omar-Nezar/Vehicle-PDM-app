@@ -3,7 +3,7 @@ import { Types } from "mongoose";
 
 import userModel from "../models/userModel.js";
 import auditModel from "../models/auditModel.js";
-import carModel from "../models/vehicleModel.js";
+import carModel from "../models/vehicleRegistryModel.js";
 
 export const getUsers = async (req: Request, res: Response) => {
   try {

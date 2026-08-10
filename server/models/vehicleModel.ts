@@ -1,43 +1,81 @@
 import mongoose, {
+    Document,
     Schema,
-    Types,
-    type Document,
     type HydratedDocument,
 } from "mongoose";
 
-export interface IVehicleRegistry extends Document {
-    owner: Types.ObjectId;
-    vehicles: String[];
-    createdAt: Date;
-    updatedAt: Date;
+export interface IVehicleData extends Omit<mongoose.Document, "model"> {
+    vehicle_id: string; // VID (e.g. "V1")
+    model: string;
+    engine_type: string;
+    engine_cc: number;
+    weight_kg: number;
+    vehicle_class: string;
+    drivetrain: string;
+    manufacture_year: number;
+    avg_daily_km: number;
 }
 
-const vehicleRegistrySchema = new Schema<IVehicleRegistry>(
+const vehicleDataSchema = new Schema<IVehicleData>(
     {
-        owner: {
-            type: Schema.Types.ObjectId,
-            ref: "User",
+        vehicle_id: {
+            type: String,
             required: true,
             unique: true,
+            index: true,
         },
 
-        vehicles: [
-            {
-                type: String,
-                ref: "Vehicle",
-            },
-        ],
+        model: {
+            type: String,
+            required: true,
+        },
+
+        engine_type: {
+            type: String,
+            required: true,
+        },
+
+        engine_cc: {
+            type: Number,
+            required: true,
+        },
+
+        weight_kg: {
+            type: Number,
+            required: true,
+        },
+
+        vehicle_class: {
+            type: String,
+            required: true,
+            enum: ["SUV", "Sedan"],
+        },
+
+        drivetrain: {
+            type: String,
+            required: true,
+            enum: ["FWD", "RWD", "AWD"],
+        },
+
+        manufacture_year: {
+            type: Number,
+            required: true,
+        },
+
+        avg_daily_km: {
+            type: Number,
+            required: true,
+        },
     },
     {
-        timestamps: true,
+        timestamps: false, // dataset = no need
         versionKey: false,
     }
 );
 
-export type VehicleRegistryDocument = HydratedDocument<IVehicleRegistry>;
+export type VehicleDataDocument = HydratedDocument<IVehicleData>;
 
-export default mongoose.model<IVehicleRegistry>(
-    "vehicle_registry",
-    vehicleRegistrySchema,
-    "vehicle_registry",
+export default mongoose.model<IVehicleData>(
+    "vehicles",
+    vehicleDataSchema,
 );
