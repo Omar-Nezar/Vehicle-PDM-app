@@ -1,6 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
 import { getUsersRequest, getUserCarsRequest, delUserRequest, getAuditLogsRequest } from "./api/userApi";
+import type { Vehicle } from "./carSlice";
 
 export const delUser = createAsyncThunk(
     "users/delUser",
@@ -62,18 +63,6 @@ type User = {
     type: string;
 };
 
-type userCar = {
-    owner: string;
-    make: string;
-    model: string;
-    year: number;
-    plateNumber: string;
-    mileage: number;
-    vin: string;
-    createdAt: Date;
-    updatedAt: Date;
-}
-
 export interface AuditLog {
     _id: string;
     userId?: string;
@@ -89,7 +78,7 @@ export interface AuditLog {
 
 type State = {
     users: User[];
-    userCars: { [userId: string]: userCar[] };
+    userCars: { [userId: string]: Vehicle[] };
     loading: boolean;
     delLoading: boolean;
     auxLoading: boolean;
