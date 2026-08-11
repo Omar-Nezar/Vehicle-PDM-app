@@ -3,7 +3,8 @@ import { Types } from "mongoose";
 
 import userModel from "../models/userModel.js";
 import auditModel from "../models/auditModel.js";
-import carModel from "../models/vehicleRegistryModel.js";
+import vehicleModel from "../models/vehicleModel.js";
+import vehicleRegistryModel from "../models/vehicleRegistryModel.js";
 
 export const getUsers = async (req: Request, res: Response) => {
   try {
@@ -24,23 +25,31 @@ export const getUserCars = async (req: Request, res: Response) => {
   try {
     const { userId } = req.params;
 
-    if (!userId) {
-      return res.status(400).json({ message: "Invalid or missing userId" });
+    const registry = await vehicleRegistryModel.findOne({
+      owner: userId as string,
+    });
+
+    if (!registry || registry.vehicles.length === 0) {
+      return res.status(200).json({
+        message: "Cars fetched successfully",
+        cars: [],
+      });
     }
 
-    const filter = userId
-      ? { owner: new Types.ObjectId(userId as string) }
-      : {}
+    const cars = await vehicleModel.find({
+      vehicle_id: { $in: registry.vehicles as string[] },
+    });
 
-    const cars = await carModel.find(filter);
-
-    res.status(200).json({
-      message: "User's cars fetched successfully",
+    return res.status(200).json({
+      message: "Cars fetched successfully",
       cars,
     });
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Server error" });
+  } catch (err) {
+    console.error(err);
+
+    return res.status(500).json({
+      message: "Failed to fetch vehicles",
+    });
   }
 };
 
