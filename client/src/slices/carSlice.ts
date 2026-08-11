@@ -1,28 +1,30 @@
 // features/vehicle/vehicleSlice.ts
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { addCarRequest, getCarsRequest, delCarRequest, updCarRequest } from "./api/carApi";
+import {
+    addCarRequest,
+    getCarsRequest,
+    getVehicleByVidRequest,
+    delCarRequest
+} from "./api/carApi";
 
-interface VehicleState {
-    cars: any[];
-    loading: boolean;
-    auxLoading: boolean;
-    error: string | null;
-    success: boolean;
+export interface Vehicle {
+    _id: string;
+    vehicle_id: string; // VID (e.g. "V1")
+    model: string;
+    engine_type: string;
+    engine_cc: number;
+    weight_kg: number;
+    vehicle_class: string;
+    drivetrain: string;
+    manufacture_year: number;
+    avg_daily_km: number;
 }
-
-const initialState: VehicleState = {
-    cars: [],
-    loading: false,
-    auxLoading: false,
-    error: null,
-    success: false,
-};
 
 export const addCar = createAsyncThunk(
     "vehicle/add",
-    async (vehicleData: any, thunkAPI) => {
+    async (vid: string, thunkAPI) => {
         try {
-            return await addCarRequest(vehicleData);
+            return await addCarRequest(vid);
         } catch (err: any) {
             return thunkAPI.rejectWithValue(
                 err.response?.data?.message || "Failed to add vehicle"
@@ -31,44 +33,78 @@ export const addCar = createAsyncThunk(
     }
 );
 
+
+// -----------------------------
+// Get user's vehicle registry
+// -----------------------------
+
 export const getUserCars = createAsyncThunk(
     "vehicle/getUserCars",
     async (_, thunkAPI) => {
         try {
-            const res = await getCarsRequest()
-            return res;
-        } catch (err: any) {
-            return thunkAPI.rejectWithValue(err.response?.data?.message);
-        }
-    }
-);
-
-export const updateCar = createAsyncThunk(
-    "vehicle/update",
-    async (
-        { id, data }: { id: string; data: any },
-        thunkAPI
-    ) => {
-        try {
-            return await updCarRequest(id, data);
+            return await getCarsRequest();
         } catch (err: any) {
             return thunkAPI.rejectWithValue(
-                err.response?.data?.message || "Failed to update vehicle"
+                err.response?.data?.message || "Failed to fetch vehicles"
             );
         }
     }
 );
 
-export const deleteCar = createAsyncThunk(
-    "vehicle/deleteCar",
-    async (_id: string, thunkApi) => {
+
+// -----------------------------
+// Get one vehicle by VID
+// -----------------------------
+
+export const getVehicleByVid = createAsyncThunk(
+    "vehicle/getByVid",
+    async (vid: string, thunkAPI) => {
         try {
-            return await delCarRequest(_id);
+            return await getVehicleByVidRequest(vid);
         } catch (err: any) {
-            return thunkApi.rejectWithValue(err.response?.data?.message);
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to fetch vehicle"
+            );
         }
     }
 );
+
+// -----------------------------
+// Remove vehicle from registry
+// -----------------------------
+
+export const deleteCar = createAsyncThunk(
+    "vehicle/deleteCar",
+    async (vid: string, thunkAPI) => {
+        try {
+            return await delCarRequest(vid);
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to delete vehicle"
+            );
+        }
+    }
+);
+
+interface VehicleState {
+    cars: Vehicle[];
+    selectedVehicle?: Vehicle
+    loading: boolean;
+    auxLoading: boolean;
+    findLoading: boolean;
+    error: string | null;
+    success: boolean;
+}
+
+const initialState: VehicleState = {
+    cars: [],
+    selectedVehicle: undefined,
+    loading: false,
+    auxLoading: false,
+    findLoading: false,
+    error: null,
+    success: false,
+};
 
 const vehicleSlice = createSlice({
     name: "vehicle",
@@ -76,89 +112,121 @@ const vehicleSlice = createSlice({
     reducers: {
         resetVehicleState: (state) => {
             state.loading = false;
+            state.auxLoading = false;
+            state.findLoading = false;
+            state.selectedVehicle = undefined;
             state.error = null;
             state.success = false;
         },
     },
     extraReducers: (builder) => {
+
+        // =============================
+        // ADD
+        // =============================
+
         builder
-            // ADD
             .addCase(addCar.pending, (state) => {
                 state.auxLoading = true;
                 state.error = null;
                 state.success = false;
             })
+
             .addCase(addCar.fulfilled, (state, action) => {
                 state.auxLoading = false;
-                state.success = true;
                 state.error = null;
-                state.cars.unshift(action.payload.car);
+                state.success = true;
+                state.cars = action.payload.cars;
             })
+
             .addCase(addCar.rejected, (state, action) => {
                 state.auxLoading = false;
+                state.success = false;
                 state.error = action.payload as string;
             });
+
+
+        // =============================
+        // GET USER CARS
+        // =============================
+
         builder
-            // GET
             .addCase(getUserCars.pending, (state) => {
                 state.loading = true;
                 state.error = null;
                 state.success = false;
             })
+
             .addCase(getUserCars.fulfilled, (state, action) => {
                 state.loading = false;
+                state.success = true;
+                state.error = null;
                 state.cars = action.payload.cars;
-                state.success = true
             })
+
             .addCase(getUserCars.rejected, (state, action) => {
                 state.loading = false;
                 state.success = false;
                 state.error = action.payload as string;
             });
+
+
+        // =============================
+        // GET ONE VEHICLE
+        // =============================
+
         builder
-            // DELETE
+            .addCase(getVehicleByVid.pending, (state) => {
+                state.findLoading = true;
+                state.error = null;
+            })
+
+            .addCase(getVehicleByVid.fulfilled, (state, action) => {
+                state.findLoading = false;
+                state.error = null;
+                state.selectedVehicle = action.payload.car;
+            })
+
+            .addCase(getVehicleByVid.rejected, (state, action) => {
+                state.findLoading = false;
+                state.error = action.payload as string;
+            });
+
+
+        // =============================
+        // DELETE
+        // =============================
+
+        builder
             .addCase(deleteCar.pending, (state) => {
                 state.auxLoading = true;
                 state.error = null;
                 state.success = false;
             })
+
             .addCase(deleteCar.fulfilled, (state, action) => {
-                state.auxLoading = false
-                state.error = null
-                state.success = true
-                state.cars = state.cars.filter(
-                    (car) => car._id !== action.meta.arg
-                );
+                state.auxLoading = false;
+                state.error = null;
+                state.success = true;
+                state.cars = action.payload.cars;
+
+                /*
+                 * If the deleted vehicle was selected,
+                 * clear it.
+                 */
+                if (
+                    state.selectedVehicle &&
+                    state.selectedVehicle.vehicle_id ===
+                    action.meta.arg
+                ) {
+                    state.selectedVehicle = undefined;
+                }
             })
+
             .addCase(deleteCar.rejected, (state, action) => {
                 state.auxLoading = false;
                 state.success = false;
                 state.error = action.payload as string;
-            });
-        builder
-            // UPDATE
-            .addCase(updateCar.pending, (state, action) => {
-                state.auxLoading = true;
-                state.success = false;
-                state.error = null
-            })
-            .addCase(updateCar.fulfilled, (state, action) => {
-                state.auxLoading = false;
-                state.success = false;
-                state.error = null
-                const car = action.payload.car
-                const index = state.cars.findIndex(
-                    (c) => c._id === car._id
-                );
-
-                if (index !== -1) {
-                    state.cars[index] = car;
-                }
-            })
-            .addCase(updateCar.rejected, (state, action) => {
-                state.auxLoading = false;
-                state.success = false;
-                state.error = action.payload as string
             });
     },
 });
