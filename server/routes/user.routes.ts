@@ -8,6 +8,6 @@ const router = express.Router();
 router.get("/getusers", protect, adminOnly, getUsers);
 router.delete("/deluser/:id", protect, adminOnly, deleteUser);
 router.get("/getlogs", protect, adminOnly, getAuditLogs);
-router.get("/getusercars/:userId", protect, adminOnly, getUserCars);
+router.get("/getUserCars/:userId", protect, adminOnly, getUserCars)
 
 export default router;
