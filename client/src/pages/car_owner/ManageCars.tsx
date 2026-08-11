@@ -11,7 +11,7 @@ import CarCard from "../common/CarCard";
 import { Button } from "@/components/ui/button";
 import { Spinner } from "@/components/ui/spinner";
 
-import { Trash2, Pencil, Plus } from "lucide-react";
+import { Trash2, Plus } from "lucide-react";
 
 export default function ManageCars() {
     const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -51,7 +51,6 @@ export default function ManageCars() {
                     <h1 className="text-2xl font-semibold">My Vehicles</h1>
 
                     <AddCarModal
-                        mode="add"
                         children={
                             <Button className="flex items-center gap-2">
                                 <Plus size={16} />
@@ -82,23 +81,13 @@ export default function ManageCars() {
                     {cars.map((car) => (
                         <CarCard key={car._id} car={car} actions={
                             <>
-                                <AddCarModal
-                                    mode="edit"
-                                    car={car}
-                                    children={
-                                        <Button variant="outline" size="icon">
-                                            <Pencil size={16} />
-                                        </Button>
-                                    }
-                                />
-
                                 <Button
                                     variant="destructive"
                                     size="icon"
-                                    onClick={() => handleDelete(car._id)}
-                                    disabled={deletingId === car._id}
+                                    onClick={() => handleDelete(car.vehicle_id)}
+                                    disabled={deletingId === car.vehicle_id}
                                 >
-                                    {deletingId === car._id ? (
+                                    {deletingId === car.vehicle_id ? (
                                         <Spinner className="" />
                                     ) : (
                                         <Trash2 size={16} />
