@@ -108,8 +108,7 @@ export default function ManageUsers() {
                         <TableCell className="p-3 flex items-center gap-2 font-medium">
                           <ChevronDown
                             size={16}
-                            className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""
-                              }`}
+                            className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
                           />
                           {user.name}
                         </TableCell>
@@ -152,7 +151,7 @@ export default function ManageUsers() {
                             <div className="flex justify-center p-4">
                               <Spinner />
                             </div>
-                          ) : cars.length === 0 ? (
+                          ) : !cars?.length ? (
                             <p className="text-sm text-muted-foreground text-center">
                               No cars found
                             </p>
