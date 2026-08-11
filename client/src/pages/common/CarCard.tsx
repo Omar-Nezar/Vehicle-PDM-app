@@ -23,18 +23,22 @@ const carImages: Record<string, string> = {
     Pathfinder,
 };
 
-type Car = {
+export type Car = {
     _id: string;
-    make: string;
+    vehicle_id: string;
     model: string;
-    year: number;
-    plateNumber: string;
-    mileage: number;
+    engine_type: string;
+    engine_cc: number;
+    weight_kg: number;
+    vehicle_class: string;
+    drivetrain: string;
+    manufacture_year: number;
+    avg_daily_km: number;
 };
 
 type CarCardProps = {
     car: Car;
-    actions?: React.ReactNode; // optional buttons
+    actions?: React.ReactNode;
     className?: string;
 };
 
@@ -45,7 +49,10 @@ export default function CarCard({
 }: CarCardProps) {
     return (
         <Card
-            className={cn("relative w-full max-w-sm pt-0 bg-card", className)}
+            className={cn(
+                "relative w-full max-w-sm pt-0 bg-card",
+                className
+            )}
         >
             {/* Image */}
             <div className="aspect-video w-full bg-linear-to-r from-muted to-background flex items-center justify-center overflow-hidden">
@@ -60,18 +67,48 @@ export default function CarCard({
             <CardHeader className="text-center">
                 <CardTitle>
                     <Badge className="text-md">
-                        {car.make} {car.model}
+                        {car.model}
                     </Badge>
                 </CardTitle>
             </CardHeader>
 
             <Separator />
 
-            {/* Content */}
-            <CardContent className="space-y-2 text-sm text-muted-foreground ml-2">
-                <p><strong>Year:</strong> {car.year}</p>
-                <p><strong>Plate:</strong> {car.plateNumber}</p>
-                <p><strong>Mileage:</strong> {car.mileage} km</p>
+            {/* Vehicle Details */}
+            <CardContent className="space-y-2 text-sm text-muted-foreground">
+                <div className="grid grid-cols-2 gap-x-4 gap-y-2">
+                    <p>
+                        <strong>VID:</strong> {car.vehicle_id}
+                    </p>
+
+                    <p>
+                        <strong>Year:</strong> {car.manufacture_year}
+                    </p>
+
+                    <p>
+                        <strong>Engine:</strong> {car.engine_type}
+                    </p>
+
+                    <p>
+                        <strong>Capacity:</strong> {car.engine_cc} cc
+                    </p>
+
+                    <p>
+                        <strong>Weight:</strong> {car.weight_kg} kg
+                    </p>
+
+                    <p>
+                        <strong>Class:</strong> {car.vehicle_class}
+                    </p>
+
+                    <p>
+                        <strong>Drivetrain:</strong> {car.drivetrain}
+                    </p>
+
+                    <p>
+                        <strong>Daily Avg:</strong> {car.avg_daily_km} km
+                    </p>
+                </div>
 
                 {/* Optional Actions */}
                 {actions && (
