@@ -2,10 +2,11 @@ import { type Request, type Response } from "express";
 import { type AuthRequest } from "../middleware/authMiddleware.js";
 import vehicleRegistryModel from "../models/vehicleRegistryModel.js";
 import vehicleModel from "../models/vehicleModel.js";
+import type { Types } from "mongoose";
 
 export const addCar = async (req: AuthRequest, res: Response) => {
     try {
-        const { vid } = req.body;
+        const { vid } = req.params;
 
         if (!vid) {
             return res.status(400).json({
@@ -13,7 +14,7 @@ export const addCar = async (req: AuthRequest, res: Response) => {
             });
         }
 
-        const exists = await vehicleModel.findOne({ vid });
+        const exists = await vehicleModel.findOne({ vehicle_id: vid });
         if (!exists) {
             return res.status(400).json({
                 message: "Invalid VID",
@@ -34,9 +35,13 @@ export const addCar = async (req: AuthRequest, res: Response) => {
             }
         );
 
+        const cars = await vehicleModel.find({
+            vehicle_id: { $in: registry.vehicles as string[] },
+        });
+
         return res.status(200).json({
             message: "Car added successfully",
-            registry,
+            cars,
         });
     } catch (error) {
         console.error(error);
@@ -50,15 +55,67 @@ export const getCars = async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user._id;
 
-        const registry = await vehicleRegistryModel.findOne({ owner: userId });
+        const registry = await vehicleRegistryModel.findOne({
+            owner: userId,
+        });
+
+        if (!registry || registry.vehicles.length === 0) {
+            return res.status(200).json({
+                message: "Cars fetched successfully",
+                cars: [],
+            });
+        }
+
+        const cars = await vehicleModel.find({
+            vehicle_id: { $in: registry.vehicles as string[] },
+        });
 
         return res.status(200).json({
             message: "Cars fetched successfully",
-            cars: registry?.vehicles || [],
+            cars,
         });
     } catch (err) {
+        console.error(err);
+
         return res.status(500).json({
             message: "Failed to fetch vehicles",
+        });
+    }
+};
+
+export const getCarByVid = async (
+    req: AuthRequest,
+    res: Response
+) => {
+    try {
+        const { vid } = req.params;
+
+        if (!vid) {
+            return res.status(400).json({
+                message: "VID is required",
+            });
+        }
+
+        // Fetch actual vehicle details
+        const vehicle = await vehicleModel.findOne({
+            vehicle_id: vid,
+        });
+
+        if (!vehicle) {
+            return res.status(404).json({
+                message: "Vehicle details not found",
+            });
+        }
+
+        return res.status(200).json({
+            message: "Vehicle fetched successfully",
+            car: vehicle,
+        });
+    } catch (error) {
+        console.error(error);
+
+        return res.status(500).json({
+            message: "Failed to fetch vehicle",
         });
     }
 };
@@ -67,7 +124,6 @@ export const deleteCar = async (req: AuthRequest, res: Response) => {
     try {
         const userId = req.user._id;
         const { vid } = req.params;
-
         if (!vid) {
             return res.status(400).json({
                 message: "VID is required",
@@ -88,9 +144,14 @@ export const deleteCar = async (req: AuthRequest, res: Response) => {
             });
         }
 
+        // Fetch actual vehicle documents
+        const vehicles = await vehicleModel.find({
+            vehicle_id: { $in: registry.vehicles as string[] },
+        });
+
         return res.status(200).json({
             message: "Vehicle removed",
-            cars: registry.vehicles,
+            cars: vehicles,
         });
     } catch (err) {
         return res.status(500).json({
