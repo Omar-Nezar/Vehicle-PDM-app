@@ -1,8 +1,12 @@
 import * as React from "react"
 import { Eye, EyeOff } from "lucide-react"
 
-import { Input } from "@/components/ui/input"
-import { Button } from "@/components/ui/button"
+import {
+    InputGroup,
+    InputGroupInput,
+    InputGroupAddon,
+    InputGroupButton
+} from "@/components/ui/input-group"
 import { cn } from "@/lib/utils"
 
 interface PasswordInputProps
@@ -13,32 +17,36 @@ interface PasswordInputProps
 const PasswordInput = React.forwardRef<
     HTMLInputElement,
     PasswordInputProps
->(({ className, containerClassName, ...props }, ref) => {
+>(({ className, containerClassName, disabled, ...props }, ref) => {
     const [show, setShow] = React.useState(false)
 
     return (
-        <div className={cn("relative flex items-center", containerClassName)}>
-            <Input
+        <InputGroup className={cn("w-full", containerClassName)}>
+            <InputGroupInput
                 ref={ref}
                 type={show ? "text" : "password"}
-                className={cn("pr-10", className)}
+                className={className}
+                disabled={disabled}
                 {...props}
             />
-
-            <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                onClick={() => setShow((prev) => !prev)}
-                className="absolute right-1 h-7 w-7 flex items-center justify-center"
-            >
-                {show ? (
-                    <EyeOff className="h-4 w-4" />
-                ) : (
-                    <Eye className="h-4 w-4" />
-                )}
-            </Button>
-        </div>
+            <InputGroupAddon align="inline-end">
+                <InputGroupButton
+                    type="button"
+                    variant="ghost"
+                    size="icon-xs"
+                    disabled={disabled}
+                    onClick={() => setShow((prev) => !prev)}
+                    className="h-7 w-7"
+                    aria-label={show ? "Hide password" : "Show password"}
+                >
+                    {show ? (
+                        <EyeOff className="h-4 w-4" />
+                    ) : (
+                        <Eye className="h-4 w-4" />
+                    )}
+                </InputGroupButton>
+            </InputGroupAddon>
+        </InputGroup>
     )
 })
 
