@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { fetchAuditLogs } from "src/slices/userSlice";
+import { getAuditLogs } from "src/slices/userSlice";
 import type { RootState, AppDispatch } from "src/store/store";
 import type { AuditLog } from "src/slices/userSlice";
 import { exportToCSV } from "src/functions/utility/generateCsv";
@@ -30,7 +30,7 @@ export default function AuditLogs() {
     const { logs, loading } = useSelector((state: RootState) => state.user);
 
     useEffect(() => {
-        dispatch(fetchAuditLogs());
+        dispatch(getAuditLogs());
     }, [dispatch]);
 
     const buildCsvData = (logs: AuditLog[]) => {
