@@ -30,7 +30,8 @@ import {
     Bell,
     ChevronsUpDown,
     BadgeCheck,
-    ClipboardClock
+    ClipboardClock,
+    FileDown
 } from "lucide-react";
 
 import { NavLink } from "react-router-dom";
@@ -110,6 +111,11 @@ export default function AppSidebar() {
                     to: "/auditlogs",
                     icon: ClipboardClock,
                 },
+                {
+                    label: "Misc",
+                    to: "/history",
+                    icon: FileDown
+                }
             ],
         },
     };
