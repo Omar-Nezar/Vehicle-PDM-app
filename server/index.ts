@@ -5,7 +5,7 @@ import dotenv from "dotenv";
 import cookieParser from "cookie-parser";
 
 import authRoutes from "./routes/auth.routes.js";
-import userRoutes from "./routes/user.routes.js";
+import userRoutes from "./routes/admin.routes.js";
 import carRoutes from "./routes/car.routes.js"
 
 import { auditMiddleware } from "./middleware/auditMiddleware.js";

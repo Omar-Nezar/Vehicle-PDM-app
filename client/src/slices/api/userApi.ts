@@ -19,3 +19,13 @@ export const getAuditLogsRequest = async () => {
   const res = await API.get("/user/getlogs");
   return res.data;
 }
+
+export const getServiceHistoryRequest = async () => {
+  const res = await API.get("/user/getHistory")
+  return res.data
+}
+
+export const getVehiclesRequest = async () => {
+  const res = await API.get("/user/getVehicles")
+  return res.data
+}

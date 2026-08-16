@@ -85,22 +85,35 @@ export const getAuditLogs = async (req: Request, res: Response) => {
   }
 };
 
-export const getServiceHistory = async (
-    req: Request,
-    res: Response
-) => {
-    try {
-        const history = await serviceHistoryModel.find().sort({ service_date: -1 });
+export const getServiceHistory = async (req: Request, res: Response) => {
+  try {
+    const history = await serviceHistoryModel.find();
 
-        return res.status(200).json({
-            message: "Service history fetched successfully",
-            history,
-        });
-    } catch (error) {
-        console.error(error);
+    return res.status(200).json({
+      message: "Service history fetched successfully",
+      history,
+    });
+  } catch (error) {
+    console.error(error);
 
-        return res.status(500).json({
-            message: "Failed to fetch service history",
-        });
-    }
+    return res.status(500).json({
+      message: "Failed to fetch service history",
+    });
+  }
 };
+
+export const getVehicles = async (req: Request, res: Response) => {
+  try {
+    const vehicles = await vehicleModel.find()
+
+    return res.status(200).json({
+      message: "Vehicles fetched successfully",
+      vehicles
+    })
+  } catch (error) {
+    console.error(error)
+    return res.status(500).json({
+      message: "Failed to fetch vehicles"
+    })
+  }
+}

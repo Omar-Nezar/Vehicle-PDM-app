@@ -1,7 +1,45 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getUsersRequest, getUserCarsRequest, delUserRequest, getAuditLogsRequest } from "./api/userApi";
+import { getUsersRequest, getUserCarsRequest, delUserRequest, getAuditLogsRequest, getServiceHistoryRequest, getVehiclesRequest } from "./api/userApi";
 import type { Vehicle } from "./carSlice";
+
+type User = {
+    _id: string;
+    name: string;
+    email: string;
+    type: string;
+};
+
+export interface AuditLog {
+    _id: string;
+    userId?: string;
+    method: string;
+    route: string;
+    statusCode: number;
+    body?: any;
+    ip?: string;
+    userAgent?: string;
+    durationMs?: number;
+    createdAt: string;
+}
+
+export interface ServiceHistory {
+    _id: string;
+    vehicle_id: string;
+    service_date: Date;
+    season: string;
+    ambient_temp: number;
+    vehicle_age: number;
+    mileage: number;
+    missed_services: number;
+    service_type: string;
+    failure_occurred: number;
+    failure_type?: string;
+    parts_replaced?: string;
+    service_cost: number;
+    createdAt: Date;
+    updatedAt: Date;
+}
 
 export const delUser = createAsyncThunk(
     "users/delUser",
@@ -31,7 +69,7 @@ export const getUsers = createAsyncThunk(
 );
 
 export const getUserCars = createAsyncThunk(
-    "admin/fetchUserCars",
+    "admin/getUserCars",
     async (userId: string, thunkAPI) => {
         try {
             return await getUserCarsRequest(userId);
@@ -43,8 +81,8 @@ export const getUserCars = createAsyncThunk(
     }
 );
 
-export const fetchAuditLogs = createAsyncThunk(
-    "audit/fetchLogs",
+export const getAuditLogs = createAsyncThunk(
+    "admin/getLogs",
     async (_, thunkAPI) => {
         try {
             return await getAuditLogsRequest();
@@ -56,25 +94,31 @@ export const fetchAuditLogs = createAsyncThunk(
     }
 );
 
-type User = {
-    _id: string;
-    name: string;
-    email: string;
-    type: string;
-};
+export const getServiceHistory = createAsyncThunk(
+    "admin/getServiceHistory",
+    async (_, thunkAPI) => {
+        try {
+            return await getServiceHistoryRequest()
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Service history fetch failed"
+            )
+        }
+    }
+)
 
-export interface AuditLog {
-    _id: string;
-    userId?: string;
-    method: string;
-    route: string;
-    statusCode: number;
-    body?: any;
-    ip?: string;
-    userAgent?: string;
-    durationMs?: number;
-    createdAt: string;
-}
+export const getVehicles = createAsyncThunk(
+    "admin/getVehicles",
+    async (_, thunkAPI) => {
+        try {
+            return await getVehiclesRequest()
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Vehicles fetch failed"
+            )
+        }
+    }
+)
 
 type State = {
     users: User[];
@@ -84,6 +128,8 @@ type State = {
     auxLoading: boolean;
     error: string | null;
     logs: AuditLog[];
+    history: ServiceHistory[];
+    vehicles: Vehicle[];
 };
 
 const initialState: State = {
@@ -94,6 +140,8 @@ const initialState: State = {
     auxLoading: false,
     error: null,
     logs: [],
+    history: [],
+    vehicles: []
 };
 
 const userSlice = createSlice({
@@ -147,17 +195,43 @@ const userSlice = createSlice({
             });
         builder
             // AUDIT
-            .addCase(fetchAuditLogs.pending, (state) => {
+            .addCase(getAuditLogs.pending, (state) => {
                 state.loading = true;
             })
-            .addCase(fetchAuditLogs.fulfilled, (state, action) => {
+            .addCase(getAuditLogs.fulfilled, (state, action) => {
                 state.loading = false;
                 state.logs = action.payload.logs;
             })
-            .addCase(fetchAuditLogs.rejected, (state, action) => {
+            .addCase(getAuditLogs.rejected, (state, action) => {
                 state.loading = false;
                 state.error = action.payload as string;
             });
+        builder
+            // SERVICE HISTORY
+            .addCase(getServiceHistory.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getServiceHistory.fulfilled, (state, action) => {
+                state.loading = false;
+                state.history = action.payload.history
+            })
+            .addCase(getServiceHistory.rejected, (state, action) => {
+                state.loading = false;
+                state.error = action.payload as string
+            });
+        builder
+            // VEHICLES
+            .addCase(getVehicles.pending, (state) => {
+                state.loading = true;
+            })
+            .addCase(getVehicles.fulfilled, (state, action) => {
+                state.loading = false
+                state.vehicles = action.payload.vehicles
+            })
+            .addCase(getVehicles.rejected, (state, action) => {
+                state.loading = false
+                state.error = action.payload as string
+            })
     },
 });
 
