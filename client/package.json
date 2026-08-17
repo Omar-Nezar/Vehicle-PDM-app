@@ -39,8 +39,5 @@
     "oxlint": "^1.71.0",
     "typescript": "~6.0.2",
     "vite": "^8.1.1"
-  },
-  "allowScripts": {
-    "@swc/core@1.15.43": true
   }
 }
