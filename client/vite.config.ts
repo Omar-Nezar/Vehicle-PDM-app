@@ -13,9 +13,9 @@ export default defineConfig({
   },
   resolve: {
     alias: {
-      "@": path.resolve(__dirname, "./@"),
-      "@schemas": path.resolve(__dirname, "../shared/schemas"),
-      "src": path.resolve(__dirname, "./src"),
+      "@": path.resolve(import.meta.dirname, "./@"),
+      "@schemas": path.resolve(import.meta.dirname, "../shared/schemas"),
+      "src": path.resolve(import.meta.dirname, "./src"),
     }
   }
 })
