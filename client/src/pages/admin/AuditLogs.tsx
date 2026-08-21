@@ -5,8 +5,6 @@ import type { RootState, AppDispatch } from "src/store/store";
 import type { AuditLog } from "src/slices/userSlice";
 import { exportToCSV } from "src/functions/utility/generateCsv";
 
-import Layout from "../common/Layout";
-
 import { DataTable } from "./AuditLog/DataTable";
 import { columns } from "./AuditLog/columns"
 import { Button } from "@/components/ui/button";
@@ -33,7 +31,7 @@ export default function AuditLogs() {
     };
 
     return (
-        <Layout>
+        <div>
             <h1 className="text-2xl font-semibold mb-6">Audit Logs</h1>
 
             <div className="flex justify-end mb-4">
@@ -52,6 +50,6 @@ export default function AuditLogs() {
                 <DataTable columns={columns} data={logs} loading={loading} />
 
             </div>
-        </Layout>
+        </div>
     );
 };

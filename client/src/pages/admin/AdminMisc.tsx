@@ -4,7 +4,6 @@ import { getServiceHistory, getVehicles } from "src/slices/userSlice";
 import type { RootState } from "src/store/store";
 import { exportToCSV } from "src/functions/utility/generateCsv";
 
-import Layout from "../common/Layout";
 import showToast from "../common/Toast";
 import { ActionCard } from "../common/ActionCard";
 
@@ -101,39 +100,37 @@ export default function Misc() {
     }
 
     return (
-        <Layout>
-            <div className="space-y-6">
-                <div>
-                    <h1 className="text-2xl font-semibold">
-                        Miscellaneous
-                    </h1>
+        <div className="space-y-6">
+            <div>
+                <h1 className="text-2xl font-semibold">
+                    Miscellaneous
+                </h1>
 
-                    <p className="text-sm text-muted-foreground mt-1">
-                        Administrative utilities and data exports.
-                    </p>
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-3">
-                    <ActionCard
-                        title="Service History"
-                        description="Download the complete vehicle service history as a CSV file."
-                        buttonText="Download Service History"
-                        loadingText="Preparing CSV..."
-                        loading={downloading === "history"}
-                        onClick={handleDownloadServiceHistory}
-                        icon={<Download className="h-4 w-4 mr-2" />}
-                    />
-                    <ActionCard
-                        title="Vehicles"
-                        description="Download the complete set of vehicles as a CSV file."
-                        buttonText="Download Vehicles"
-                        loadingText="Preparing CSV..."
-                        loading={downloading === "vehicles"}
-                        onClick={handleDownloadVehicles}
-                        icon={<Download className="h-4 w-4 mr-2" />}
-                    />
-                </div>
+                <p className="text-sm text-muted-foreground mt-1">
+                    Administrative utilities and data exports.
+                </p>
             </div>
-        </Layout>
+
+            <div className="grid grid-cols-1 md:grid-cols-3">
+                <ActionCard
+                    title="Service History"
+                    description="Download the complete vehicle service history as a CSV file."
+                    buttonText="Download Service History"
+                    loadingText="Preparing CSV..."
+                    loading={downloading === "history"}
+                    onClick={handleDownloadServiceHistory}
+                    icon={<Download className="h-4 w-4 mr-2" />}
+                />
+                <ActionCard
+                    title="Vehicles"
+                    description="Download the complete set of vehicles as a CSV file."
+                    buttonText="Download Vehicles"
+                    loadingText="Preparing CSV..."
+                    loading={downloading === "vehicles"}
+                    onClick={handleDownloadVehicles}
+                    icon={<Download className="h-4 w-4 mr-2" />}
+                />
+            </div>
+        </div>
     );
 }

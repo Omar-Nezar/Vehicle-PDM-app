@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
 import { delUser, getUsers, getUserCars } from "../../slices/userSlice";
-import Layout from "../common/Layout";
 import UserBadge from "./UserBadge";
 import Toast from "../common/Toast";
 import CarCard from "../common/CarCard";
@@ -54,7 +53,7 @@ export default function ManageUsers() {
   };
 
   return (
-    <Layout>
+    <div>
       <h1 className="text-2xl font-semibold text-foreground mb-6">
         Manage Users
       </h1>
@@ -173,6 +172,6 @@ export default function ManageUsers() {
           </Table>
         )}
       </div>
-    </Layout >
+    </div >
   );
 }

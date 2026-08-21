@@ -25,6 +25,7 @@ import AdminMisc from './pages/admin/AdminMisc'
 
 // Aux
 import ThemeButton from './pages/common/ThemeButton'
+import Layout from './pages/common/Layout';
 
 function App() {
   const location = useLocation();
@@ -57,16 +58,20 @@ function App() {
         <Route element={<RequireAuth />}>
           {/* Car Owner Routes */}
           <Route element={<RequireRole role="car_owner" />}>
-            <Route path="/carownerhome" element={<CarOwnerHome />} />
-            <Route path="/managecars" element={<ManageCars />} />
+            <Route element={<Layout />}>
+              <Route path="/carownerhome" element={<CarOwnerHome />} />
+              <Route path="/managecars" element={<ManageCars />} />
+            </Route>
           </Route>
 
           {/* Admin Routes */}
           <Route element={<RequireRole role="admin" />}>
-            <Route path="/adminhome" element={<AdminHome />} />
-            <Route path="/manageUsers" element={<ManageUsers />} />
-            <Route path="/auditlogs" element={<AuditLogs />} />
-            <Route path="/history" element={<AdminMisc />} />
+            <Route element={<Layout />}>
+              <Route path="/adminhome" element={<AdminHome />} />
+              <Route path="/manageUsers" element={<ManageUsers />} />
+              <Route path="/auditlogs" element={<AuditLogs />} />
+              <Route path="/history" element={<AdminMisc />} />
+            </Route>
           </Route>
         </Route>
       </Routes>

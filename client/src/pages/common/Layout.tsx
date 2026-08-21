@@ -1,4 +1,4 @@
-"use client";
+import { Outlet } from "react-router-dom";
 
 import {
   SidebarProvider,
@@ -8,11 +8,7 @@ import {
 import SideBar from "./SideBar";
 import getUserType from "src/functions/utility/getUserType";
 
-type Props = {
-  children: React.ReactNode;
-};
-
-export default function Layout({ children }: Props) {
+export default function Layout() {
   const type = getUserType()
   return (
     <SidebarProvider style={
@@ -39,7 +35,7 @@ export default function Layout({ children }: Props) {
 
           {/* Page content */}
           <main className="flex-1 p-6 bg-muted">
-            {children}
+            <Outlet/>
           </main>
         </div>
       </div>

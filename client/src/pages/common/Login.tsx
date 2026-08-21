@@ -132,7 +132,11 @@ export default function Login() {
                                 <Label htmlFor="password">
                                     Password
                                 </Label>
-
+                                <Link to="/forgotpassword">
+                                    <Button variant="link" size="sm" className="h-auto p-0 cursor-pointer">
+                                        Forgot password?
+                                    </Button>
+                                </Link>
                             </div>
 
                             <PasswordInput
@@ -158,21 +162,12 @@ export default function Login() {
                         <Separator className="flex-1" />
                     </div>
 
-                    <div className="grid grid-cols-2 gap-3 mt-6 text-center text-sm text-muted-foreground">
+                    <div className="flex justify-center mt-0 text-center text-sm text-muted-foreground">
                         <p>
                             Don't have an account?
                             <Link to="/register">
                                 <Button variant="link" size="sm" className="block pl-0 mt-1 mx-auto cursor-pointer">
                                     Create account
-                                </Button>
-                            </Link>
-                        </p>
-
-                        <p>
-                            Lost your password?
-                            <Link to="/forgotpassword">
-                                <Button variant="link" size="sm" className="block pl-0 mt-1 mx-auto cursor-pointer">
-                                    Forgot password
                                 </Button>
                             </Link>
                         </p>

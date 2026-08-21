@@ -3,7 +3,6 @@ import { useAppDispatch, useAppSelector } from "src/store/hooks";
 import { type RootState } from "src/store/store";
 import { getUserCars, deleteCar } from "src/slices/carSlice";
 
-import Layout from "../common/Layout";
 import showToast from "../common/Toast";
 import AddCarModal from "./AddCarModal";
 import CarCard from "../common/CarCard";
@@ -43,7 +42,6 @@ export default function ManageCars() {
     };
 
     return (
-        <Layout>
             <div className="p-6 space-y-6">
 
                 {/* Header */}
@@ -99,6 +97,5 @@ export default function ManageCars() {
                 </div>)
                 }
             </div>
-        </Layout >
     );
 };
