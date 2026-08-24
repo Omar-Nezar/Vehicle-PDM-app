@@ -117,3 +117,43 @@ export const getVehicles = async (req: Request, res: Response) => {
     })
   }
 }
+
+export const deleteUserCar = async (req: Request, res: Response) => {
+  try {
+    const { vid, userId } = req.params;
+    if (!vid || !userId) {
+      return res.status(400).json({
+        message: "VID and userId are required",
+      });
+    }
+
+    const registry = await vehicleRegistryModel.findOneAndUpdate(
+      { owner: userId },
+      {
+        $pull: { vehicles: vid },
+      },
+      { returnDocument: "after" }
+    );
+
+    if (!registry || registry.vehicles.length === 0) {
+      return res.status(200).json({
+        message: "Cars fetched successfully",
+        cars: [],
+      });
+    }
+
+    // Fetch actual vehicle documents
+    const vehicles = await vehicleModel.find({
+      vehicle_id: { $in: registry.vehicles as string[] },
+    });
+
+    return res.status(200).json({
+      message: "Vehicle removed",
+      cars: vehicles,
+    });
+  } catch (err) {
+    return res.status(500).json({
+      message: "Failed to delete vehicle",
+    });
+  }
+};

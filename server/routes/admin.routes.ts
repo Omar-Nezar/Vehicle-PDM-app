@@ -7,6 +7,7 @@ import {
     getUserCars,
     getServiceHistory,
     getVehicles,
+    deleteUserCar
 } from "../controllers/admin.controller.js";
 import { protect, adminOnly } from "../middleware/authMiddleware.js";
 
@@ -18,5 +19,6 @@ router.get("/getlogs", protect, adminOnly, getAuditLogs);
 router.get("/getUserCars/:userId", protect, adminOnly, getUserCars)
 router.get("/getHistory", protect, adminOnly, getServiceHistory)
 router.get("/getVehicles", protect, adminOnly, getVehicles)
+router.delete("/deleteUserCar/:vid/:userId", protect, adminOnly, deleteUserCar)
 
 export default router;

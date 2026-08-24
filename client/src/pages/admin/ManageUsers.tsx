@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAppDispatch, useAppSelector } from "../../store/hooks";
-import { delUser, getUsers, getUserCars } from "../../slices/userSlice";
+import { delUser, getUsers, getUserCars, deleteUserCar } from "../../slices/userSlice";
 import UserBadge from "./UserBadge";
 import Toast from "../common/Toast";
 import CarCard from "../common/CarCard";
@@ -21,6 +21,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
+import { Button } from "@/components/ui/button";
 
 export default function ManageUsers() {
   const [deletingId, setDeletingId] = useState<string | null>(null);
@@ -43,6 +44,23 @@ export default function ManageUsers() {
         promise,
         message: "User Deleted Successfully",
         description: `User ${_id} Deleted`,
+      });
+      await promise;
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setDeletingId(null);
+    }
+  };
+
+  const handleDeleteCar = async (vid: string, userId: string) => {
+    try {
+      setDeletingId(vid);
+      const promise = dispatch(deleteUserCar({ vid, userId })).unwrap();
+      Toast({
+        promise,
+        message: "Vehicle Deleted Successfully",
+        description: `Vehicle ${vid} Deleted from user ${userId}`,
       });
       await promise;
     } catch (err) {
@@ -155,9 +173,24 @@ export default function ManageUsers() {
                               No cars found
                             </p>
                           ) : (
-                            <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-4">
                               {cars.map((car: any) => (
-                                <CarCard key={car._id} car={car} />
+                                <CarCard key={car._id} car={car} actions={
+                                  <>
+                                    <Button
+                                      variant="destructive"
+                                      size="icon"
+                                      onClick={() => handleDeleteCar(car.vehicle_id, user._id)}
+                                      disabled={deletingId === car.vehicle_id}
+                                    >
+                                      {deletingId === car.vehicle_id ? (
+                                        <Spinner className="" />
+                                      ) : (
+                                        <Trash2 size={16} />
+                                      )}
+                                    </Button>
+                                  </>
+                                } />
                               ))}
                             </div>
                           )}
@@ -168,7 +201,6 @@ export default function ManageUsers() {
                 </Collapsible>
               );
             })}
-
           </Table>
         )}
       </div>

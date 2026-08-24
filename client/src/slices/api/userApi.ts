@@ -29,3 +29,8 @@ export const getVehiclesRequest = async () => {
   const res = await API.get("/user/getVehicles")
   return res.data
 }
+
+export const deleteUserCarRequest = async (vid: string, userId: string) => {
+  const res = await API.delete(`/user/deleteUserCar/${vid}/${userId}`)
+  return res.data
+}

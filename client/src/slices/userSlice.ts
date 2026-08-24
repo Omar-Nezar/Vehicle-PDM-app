@@ -1,6 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import { getUsersRequest, getUserCarsRequest, delUserRequest, getAuditLogsRequest, getServiceHistoryRequest, getVehiclesRequest } from "./api/userApi";
+import {
+    getUsersRequest,
+    getUserCarsRequest,
+    delUserRequest,
+    getAuditLogsRequest,
+    getServiceHistoryRequest,
+    getVehiclesRequest,
+    deleteUserCarRequest
+} from "./api/userApi";
 import type { Vehicle } from "./carSlice";
 
 type User = {
@@ -120,6 +128,19 @@ export const getVehicles = createAsyncThunk(
     }
 )
 
+export const deleteUserCar = createAsyncThunk(
+    "admin/deleteUserCar",
+    async ({ vid, userId }: { vid: string, userId: string }, thunkAPI) => {
+        try {
+            return await deleteUserCarRequest(vid, userId)
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to delete vehicle"
+            );
+        }
+    }
+);
+
 type State = {
     users: User[];
     userCars: { [userId: string]: Vehicle[] };
@@ -231,7 +252,20 @@ const userSlice = createSlice({
             .addCase(getVehicles.rejected, (state, action) => {
                 state.loading = false
                 state.error = action.payload as string
+            });
+        builder
+            // DELETE CAR
+            .addCase(deleteUserCar.pending, (state) => {
+                state.auxLoading = true;
             })
+            .addCase(deleteUserCar.fulfilled, (state, action) => {
+                state.auxLoading = false
+                state.userCars[action.meta.arg.userId] = action.payload.cars
+            })
+            .addCase(deleteUserCar.rejected, (state, action) => {
+                state.auxLoading = false
+                state.error = action.payload as string
+            });
     },
 });
 
