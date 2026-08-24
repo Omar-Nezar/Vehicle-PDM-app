@@ -22,6 +22,7 @@ import AdminHome from './pages/admin/AdminHome'
 import ManageUsers from './pages/admin/ManageUsers'
 import AuditLogs from './pages/admin/AuditLogs'
 import AdminMisc from './pages/admin/AdminMisc'
+import ViewCars from './pages/admin/ViewCars'
 
 // Aux
 import ThemeButton from './pages/common/ThemeButton'
@@ -56,6 +57,7 @@ function App() {
         </Route>
 
         <Route element={<RequireAuth />}>
+
           {/* Car Owner Routes */}
           <Route element={<RequireRole role="car_owner" />}>
             <Route element={<Layout />}>
@@ -71,6 +73,7 @@ function App() {
               <Route path="/manageUsers" element={<ManageUsers />} />
               <Route path="/auditlogs" element={<AuditLogs />} />
               <Route path="/history" element={<AdminMisc />} />
+              <Route path="/viewcars" element={<ViewCars />} />
             </Route>
           </Route>
         </Route>

@@ -71,7 +71,7 @@ export function DataTable<TData extends RowData>({
         <div className="rounded-md border">
             <div className="flex items-center py-4 pl-2">
                 <Input
-                    placeholder="Filter audit logs..."
+                    placeholder="Filter vehicles..."
                     value={globalFilter}
                     onChange={(event) =>
                         table.setGlobalFilter(event.target.value)
@@ -130,7 +130,7 @@ export function DataTable<TData extends RowData>({
                                 colSpan={table.getVisibleLeafColumns().length}
                                 className="h-24 text-center text-muted-foreground"
                             >
-                                No audit logs found.
+                                No vehicles found.
                             </TableCell>
                         </TableRow>
                     )}

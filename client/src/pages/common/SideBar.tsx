@@ -103,6 +103,11 @@ export default function AppSidebar() {
                     icon: ClipboardClock,
                 },
                 {
+                    label: "View Cars",
+                    to: "/viewcars",
+                    icon: CarFront,
+                },
+                {
                     label: "Misc",
                     to: "/history",
                     icon: FileDown
