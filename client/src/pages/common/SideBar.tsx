@@ -24,7 +24,6 @@ import {
 import {
     Home,
     Users,
-    User,
     CarFront,
     LogOut,
     Bell,
@@ -34,7 +33,7 @@ import {
     FileDown
 } from "lucide-react";
 
-import { NavLink } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
 import decodeToken from "src/functions/utility/decodeToken";
@@ -68,14 +67,6 @@ export default function AppSidebar() {
             console.error(err)
         }
     };
-
-    const linkActive = (isActive: boolean) =>
-        cn(
-            "flex items-center gap-2 py-3 w-full h-full rounded-sm",
-            isActive
-                ? "bg-accent text-accent-foreground"
-                : "text-muted-foreground"
-        );
 
     const sidebarConfig = {
         "car_owner": {
@@ -134,23 +125,23 @@ export default function AppSidebar() {
                         </SidebarGroupLabel>
 
                         <SidebarGroupContent>
-                            <SidebarMenu>
+                            <SidebarMenu className="gap-2">
                                 {sidebarConfig[sidebarType].items.map((item, index) => {
+                                    const isActive = location.pathname === item.to
                                     const Icon = item.icon;
 
                                     return (
                                         <SidebarMenuItem key={index}>
-                                            <SidebarMenuButton className="rounded-2xl">
-                                                <NavLink
-                                                    to={item.to}
-                                                    className={({ isActive }) =>
-                                                        linkActive(isActive)
-                                                    }
-                                                >
-                                                    <Icon className="w-4 h-4" />
-                                                    <span>{item.label}</span>
-                                                </NavLink>
-                                            </SidebarMenuButton>
+                                            <SidebarMenuButton
+                                                className="rounded-2xl"
+                                                isActive={isActive}
+                                                render={
+                                                    <Link to={item.to}>
+                                                        <Icon className="w-4 h-4" />
+                                                        <span>{item.label}</span>
+                                                    </Link>
+                                                }
+                                            />
                                         </SidebarMenuItem>
                                     );
                                 })}

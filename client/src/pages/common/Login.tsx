@@ -164,9 +164,9 @@ export default function Login() {
 
                     <div className="flex justify-center mt-0 text-center text-sm text-muted-foreground">
                         <p>
-                            Don't have an account?
+                            Don't have an account? {' '}
                             <Link to="/register">
-                                <Button variant="link" size="sm" className="block pl-0 mt-1 mx-auto cursor-pointer">
+                                <Button variant="link" size="sm" className="pl-0 mt-1 mx-auto cursor-pointer">
                                     Create account
                                 </Button>
                             </Link>
