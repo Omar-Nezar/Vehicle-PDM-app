@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useAppDispatch, useAppSelector } from "src/store/hooks";
-import { getServiceHistory, getVehicles } from "src/slices/userSlice";
+import { getServiceHistory, getVehicles, getAuditLogs } from "src/slices/userSlice";
 import type { RootState } from "src/store/store";
 import { exportToCSV } from "src/functions/utility/generateCsv";
 
@@ -12,7 +12,7 @@ import { Download } from "lucide-react";
 export default function Misc() {
     const dispatch = useAppDispatch();
 
-    const { history, vehicles } = useAppSelector(
+    const { history, vehicles, logs } = useAppSelector(
         (state: RootState) => state.user
     );
 
@@ -61,6 +61,24 @@ export default function Misc() {
         } finally {
             setDownloading("");
         }
+    };
+
+    const handleDownloadAuditLogs = () => {
+        return handleDownloadCSV({
+            downloading: "audit",
+            action: () => dispatch(getAuditLogs()).unwrap(),
+
+            filename: `audit_logs_${new Date()
+                .toISOString()
+                .slice(0, 10)}.csv`,
+
+            successMessage: "Audit logs downloaded",
+
+            successDescription: "Full audit logs CSV has been generated",
+
+            getRecords: (data) =>
+                data?.auditLogs ?? data?.logs ?? logs,
+        });
     };
 
     const handleDownloadServiceHistory = () => {
@@ -112,6 +130,15 @@ export default function Misc() {
             </div>
 
             <div className="grid grid-cols-1 md:grid-cols-3">
+                <ActionCard
+                    title="Audit Logs"
+                    description="Download audit logs as a CSV file."
+                    buttonText="Download Audit Logs"
+                    loadingText="Preparing CSV..."
+                    loading={downloading === "audit"}
+                    onClick={handleDownloadAuditLogs}
+                    icon={<Download className="h-4 w-4 mr-2" />}
+                />
                 <ActionCard
                     title="Service History"
                     description="Download the complete vehicle service history as a CSV file."
