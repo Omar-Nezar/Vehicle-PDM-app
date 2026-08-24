@@ -16,9 +16,14 @@ const app = express();
 
 app.use(cookieParser());
 
+// const allowedOrigins = [
+//     "http://localhost:5173",
+//     "http://192.168.68.59:5173",
+// ];
+
 app.use(
     cors({
-        origin: "http://localhost:5173", // frontend URL
+        origin: true,
         credentials: true,
     })
 );

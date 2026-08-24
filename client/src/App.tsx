@@ -25,7 +25,6 @@ import AdminMisc from './pages/admin/AdminMisc'
 import ViewCars from './pages/admin/ViewCars'
 
 // Aux
-import ThemeButton from './pages/common/ThemeButton'
 import Layout from './pages/common/Layout';
 
 function App() {
@@ -79,7 +78,6 @@ function App() {
         </Route>
       </Routes>
       <Toaster richColors position="top-right" />
-      <ThemeButton />
     </>
   )
 }

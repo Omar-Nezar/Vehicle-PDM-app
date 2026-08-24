@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import {
     Sidebar,
     SidebarContent,
@@ -27,6 +27,8 @@ import {
     CarFront,
     LogOut,
     Bell,
+    Sun,
+    Moon,
     ChevronsUpDown,
     BadgeCheck,
     ClipboardClock,
@@ -34,7 +36,6 @@ import {
 } from "lucide-react";
 
 import { Link } from "react-router-dom";
-import { cn } from "@/lib/utils";
 
 import decodeToken from "src/functions/utility/decodeToken";
 import { useAppDispatch } from "src/store/hooks";
@@ -47,8 +48,14 @@ import AccountModal from "./ManageAccount";
 
 export default function AppSidebar() {
     const [accountModalOpen, setAccountModalOpen] = useState(false);
+    const [dark, setDark] = useState(() => localStorage.getItem("theme") === "dark");
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+
+    useEffect(() => {
+        document.documentElement.classList.toggle("dark", dark);
+        localStorage.setItem("theme", dark ? "dark" : "light");
+    }, [dark]);
 
     const handleLogout = async () => {
         const promise = dispatch(logoutUser()).unwrap();
@@ -200,6 +207,10 @@ export default function AppSidebar() {
                                     <DropdownMenuItem>
                                         <Bell />
                                         Notifications
+                                    </DropdownMenuItem>
+                                    <DropdownMenuItem onClick={() => setDark((current) => !current)}>
+                                        {dark ? <Sun /> : <Moon />}
+                                        {dark ? "Light mode" : "Dark mode"}
                                     </DropdownMenuItem>
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />

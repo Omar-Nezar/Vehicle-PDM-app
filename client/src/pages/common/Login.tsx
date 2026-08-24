@@ -166,7 +166,7 @@ export default function Login() {
                         <p>
                             Don't have an account? {' '}
                             <Link to="/register">
-                                <Button variant="link" size="sm" className="pl-0 mt-1 mx-auto cursor-pointer">
+                                <Button variant="link" size="sm" className="pl-0 mx-auto cursor-pointer">
                                     Create account
                                 </Button>
                             </Link>
