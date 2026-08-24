@@ -5,6 +5,7 @@ import {
     type RowData,
     type SortingState,
     type ColumnFiltersState,
+    type PaginationState,
     type Updater,
     flexRender,
     useTable,
@@ -38,6 +39,10 @@ export function DataTable<TData extends RowData>({
     const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
         []
     )
+    const [pagination, setPagination] = React.useState<PaginationState>({
+        pageIndex: 0,
+        pageSize: 10,
+    })
     const [globalFilter, setGlobalFilter] = React.useState("")
     const table = useTable({
         features,
@@ -45,6 +50,7 @@ export function DataTable<TData extends RowData>({
         columns,
         onSortingChange: setSorting,
         onColumnFiltersChange: setColumnFilters,
+        onPaginationChange: setPagination,
         onGlobalFilterChange: (updater: Updater<string | undefined>) => {
             setGlobalFilter((currentFilter) => {
                 const nextFilter = typeof updater === "function"
@@ -56,6 +62,7 @@ export function DataTable<TData extends RowData>({
         state: {
             sorting,
             columnFilters,
+            pagination,
             globalFilter,
         },
     })
@@ -94,7 +101,7 @@ export function DataTable<TData extends RowData>({
                     {loading ? (
                         <TableRow>
                             <TableCell
-                                colSpan={columns.length}
+                                colSpan={table.getVisibleLeafColumns().length}
                                 className="h-24 text-center text-muted-foreground"
                             >
                                 Loading...
@@ -120,7 +127,7 @@ export function DataTable<TData extends RowData>({
                     ) : (
                         <TableRow>
                             <TableCell
-                                colSpan={columns.length}
+                                colSpan={table.getVisibleLeafColumns().length}
                                 className="h-24 text-center text-muted-foreground"
                             >
                                 No audit logs found.

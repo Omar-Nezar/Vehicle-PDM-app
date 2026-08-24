@@ -12,6 +12,7 @@ export default defineConfig({
     port: 5173,
   },
   resolve: {
+    dedupe: ["react", "react-dom"],
     alias: {
       "@": path.resolve(import.meta.dirname, "./@"),
       "@schemas": path.resolve(import.meta.dirname, "../shared/schemas"),

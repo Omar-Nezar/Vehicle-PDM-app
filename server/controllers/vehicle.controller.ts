@@ -83,10 +83,7 @@ export const getCars = async (req: AuthRequest, res: Response) => {
     }
 };
 
-export const getCarByVid = async (
-    req: AuthRequest,
-    res: Response
-) => {
+export const getCarByVid = async (req: AuthRequest, res: Response) => {
     try {
         const { vid } = req.params;
 
