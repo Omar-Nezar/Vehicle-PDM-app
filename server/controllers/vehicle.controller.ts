@@ -98,6 +98,11 @@ export const getCarByVid = async (req: AuthRequest, res: Response) => {
         });
 
         if (existingOwner) {
+            if (existingOwner.owner.toString() === req.user._id.toString()) {
+                return res.status(409).json({
+                    message: "This vehicle is already owned by you",
+                });
+            }
             return res.status(409).json({
                 message: "This vehicle is already owned by another user",
             });
