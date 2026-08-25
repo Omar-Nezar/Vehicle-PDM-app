@@ -8,7 +8,12 @@ import {
 import SideBar from "./SideBar";
 import getUserType from "src/functions/utility/getUserType";
 
-export default function Layout() {
+type LayoutProps = {
+  dark: boolean;
+  setDark: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function Layout({ dark, setDark }: LayoutProps) {
   const type = getUserType()
   return (
     <SidebarProvider style={
@@ -18,7 +23,7 @@ export default function Layout() {
       } as React.CSSProperties
     }>
       <div className="flex min-h-screen w-full bg-background">
-        <SideBar />
+        <SideBar dark={dark} setDark={setDark} />
 
         {/* Main area */}
         <div className="flex flex-col flex-1">

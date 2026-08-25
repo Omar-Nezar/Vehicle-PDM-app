@@ -1,5 +1,5 @@
 import { Routes, Route, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Toaster } from "@/components/ui/sonner"
 import showToast from './pages/common/Toast';
 import RequireAuth from "./routes/RequireAuth";
@@ -30,6 +30,12 @@ import Layout from './pages/common/Layout';
 function App() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [dark, setDark] = useState(() => localStorage.getItem("theme") === "dark");
+
+  useEffect(() => {
+    document.documentElement.classList.toggle("dark", dark);
+    localStorage.setItem("theme", dark ? "dark" : "light");
+  }, [dark]);
 
   useEffect(() => {
     const state = location.state as any;
@@ -59,7 +65,7 @@ function App() {
 
           {/* Car Owner Routes */}
           <Route element={<RequireRole role="car_owner" />}>
-            <Route element={<Layout />}>
+            <Route element={<Layout dark={dark} setDark={setDark} />}>
               <Route path="/carownerhome" element={<CarOwnerHome />} />
               <Route path="/managecars" element={<ManageCars />} />
             </Route>
@@ -67,7 +73,7 @@ function App() {
 
           {/* Admin Routes */}
           <Route element={<RequireRole role="admin" />}>
-            <Route element={<Layout />}>
+            <Route element={<Layout dark={dark} setDark={setDark} />}>
               <Route path="/adminhome" element={<AdminHome />} />
               <Route path="/manageUsers" element={<ManageUsers />} />
               <Route path="/auditlogs" element={<AuditLogs />} />
