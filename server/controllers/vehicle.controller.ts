@@ -93,6 +93,16 @@ export const getCarByVid = async (req: AuthRequest, res: Response) => {
             });
         }
 
+        const existingOwner = await vehicleRegistryModel.findOne({
+            vehicles: vid,
+        });
+
+        if (existingOwner) {
+            return res.status(409).json({
+                message: "This vehicle is already owned by another user",
+            });
+        }
+
         // Fetch actual vehicle details
         const vehicle = await vehicleModel.findOne({
             vehicle_id: vid,
