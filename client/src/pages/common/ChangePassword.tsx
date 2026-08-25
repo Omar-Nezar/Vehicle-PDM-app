@@ -10,6 +10,7 @@ import showToast from "./Toast";
 import LoadingButton from "./LoadingButton";
 import PasswordInput from "./PasswordInput";
 import ErrorDiv from "./ErrorDiv";
+import { useHandleLogout } from "src/functions/utility/logout";
 
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -21,15 +22,19 @@ type PasswordFormProps = {
 export default function PasswordForm({ onBack }: PasswordFormProps) {
     const dispatch = useAppDispatch();
     const { loading } = useAppSelector((state) => state.auth);
+    const handleLogout = useHandleLogout();
     const { register, handleSubmit, reset, clearErrors, formState: { errors } } = useForm<ChangeFormData>({
         resolver: zodResolver(changePwdSchema),
     });
 
     const onSubmit = async (data: ChangeFormData) => {
-        const promise = dispatch(changePassword(data)).unwrap();
-        showToast({ promise, message: "Password Changed Successfully!", description: "Your password has been changed" })
-
-        await promise
+        try {
+            await dispatch(changePassword(data)).unwrap();
+            handleLogout("chgPwd");
+        } catch (err) {
+            console.error(err);
+            showToast({ message: "Password change failed", description: "Please try again later" });
+        }
     };
 
     const handleBack = () => {
