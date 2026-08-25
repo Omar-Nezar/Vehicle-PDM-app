@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import {
     Sidebar,
     SidebarContent,
@@ -35,44 +35,32 @@ import {
     FileDown
 } from "lucide-react";
 
+import { useIsMobile } from "@/hooks/use-mobile";
 import { Link } from "react-router-dom";
 
 import decodeToken from "src/functions/utility/decodeToken";
 import { useAppDispatch } from "src/store/hooks";
-import { logoutUser } from "src/slices/authSlice";
 import { useNavigate } from "react-router-dom";
 import showToast from "../common/Toast";
 import UserAvatar from "./UserAvatar";
 import getInitials from "src/functions/utility/getInitials";
 import AccountModal from "./ManageAccount";
+import { useHandleLogout } from "src/functions/utility/logout";
 
-export default function AppSidebar() {
+type SidebarProps = {
+    dark: boolean;
+    setDark: React.Dispatch<React.SetStateAction<boolean>>;
+};
+
+export default function AppSidebar({ dark, setDark }: SidebarProps) {
     const [accountModalOpen, setAccountModalOpen] = useState(false);
-    const [dark, setDark] = useState(() => localStorage.getItem("theme") === "dark");
     const dispatch = useAppDispatch();
     const navigate = useNavigate();
+    const isMobile = useIsMobile();
+    const handleLogout = useHandleLogout();
 
-    useEffect(() => {
-        document.documentElement.classList.toggle("dark", dark);
-        localStorage.setItem("theme", dark ? "dark" : "light");
-    }, [dark]);
-
-    const handleLogout = async () => {
-        const promise = dispatch(logoutUser()).unwrap();
-
-        showToast({
-            promise,
-            message: "Logged out",
-            description: "You have been logged out successfully",
-        });
-
-        try {
-            await promise;
-            localStorage.removeItem("authToken");
-            navigate("/login");
-        } catch (err) {
-            console.error(err)
-        }
+    const handleLogoutClick = () => {
+        void handleLogout();
     };
 
     const sidebarConfig = {
@@ -183,7 +171,7 @@ export default function AppSidebar() {
                             </DropdownMenuTrigger>
                             <DropdownMenuContent
                                 className="w-(--radix-dropdown-menu-trigger-width) min-w-56 rounded-lg"
-                                side={/*isMobile ? "bottom" :*/ "right"}
+                                side={isMobile ? "bottom" : "right"}
                                 align="end"
                                 sideOffset={4}
                             >
@@ -215,7 +203,7 @@ export default function AppSidebar() {
                                 </DropdownMenuGroup>
                                 <DropdownMenuSeparator />
                                 <DropdownMenuGroup>
-                                    <DropdownMenuItem onClick={handleLogout}>
+                                    <DropdownMenuItem onClick={handleLogoutClick}>
                                         <LogOut className="h-4 w-4" />
                                         Log out
                                     </DropdownMenuItem>

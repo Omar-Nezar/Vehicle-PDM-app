@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom"
-import { useState, useEffect } from "react";
+import { useState } from "react";
 
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -74,7 +74,7 @@ export default function ForgotPassword() {
                             />
                         </div>
 
-                        <LoadingButton className="w-full cursor-pointer" type="submit" loading={loading} loadingChildren="Sending...">
+                        <LoadingButton className="w-full h-11 cursor-pointer" type="submit" loading={loading} loadingChildren="Sending...">
                             Reset Password
                         </LoadingButton>
                     </form>
@@ -87,14 +87,16 @@ export default function ForgotPassword() {
                         <Separator className="flex-1" />
                     </div>
 
-                    <p className="mt-6 text-center text-sm text-muted-foreground">
-                        Don't need help?
-                        <Link to="/login">
-                            <Button variant="link" size="sm" className="block pl-0 mt-1 mx-auto cursor-pointer">
-                                Back to Login
-                            </Button>
-                        </Link>
-                    </p>
+                    <div className="flex justify-center mt-0 text-center text-sm text-muted-foreground">
+                        <p>
+                            Don't need help? {' '}
+                            <Link to="/login">
+                                <Button variant="link" size="sm" className="pl-0 mx-auto cursor-pointer">
+                                    Back to Login
+                                </Button>
+                            </Link>
+                        </p>
+                    </div>
                 </CardContent>
             </Card>
         </div>

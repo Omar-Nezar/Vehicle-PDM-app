@@ -75,7 +75,7 @@ export default function ManageCars() {
                     <div className="flex items-center justify-center min-h-[60vh]">
                         <Spinner className="h-8 w-8 animate-spin" />
                     </div>
-                ) : (< div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                ) : (< div className="grid md:grid-cols-3 lg:grid-cols-4 gap-6">
                     {cars.map((car) => (
                         <CarCard key={car._id} car={car} actions={
                             <>

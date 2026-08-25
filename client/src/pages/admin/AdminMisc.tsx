@@ -129,7 +129,7 @@ export default function Misc() {
                 </p>
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3">
+            <div className="grid grid-cols-1 gap-y-2 md:grid-cols-3">
                 <ActionCard
                     title="Audit Logs"
                     description="Download audit logs as a CSV file."

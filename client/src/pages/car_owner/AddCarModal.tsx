@@ -80,8 +80,13 @@ export default function AddCarModal({
             return;
         }
 
-        await dispatch(getVehicleByVid(vid)).unwrap();
-
+        const promise = dispatch(getVehicleByVid(vid)).unwrap();
+        showToast({
+            promise,
+            message: "Vehicle found",
+            description: "Review vehicle details",
+        });
+        await promise;
     };
 
     const onSubmit = async (data: vidFormData) => {
@@ -111,7 +116,7 @@ export default function AddCarModal({
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger render={children} />
 
-            <DialogContent className="max-w-md">
+            <DialogContent className="sm:max-w-md">
                 <DialogHeader className="text-center">
                     <DialogTitle>Add Vehicle</DialogTitle>
                     <Separator />
