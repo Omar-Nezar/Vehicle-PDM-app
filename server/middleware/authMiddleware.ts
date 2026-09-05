@@ -59,3 +59,15 @@ export const carOwnerOnly = (
     return res.status(403).json({ message: "Car owner access required" });
   }
 };
+
+export const inventoryManagerOnly = (
+    req: AuthRequest,
+    res: Response,
+    next: NextFunction
+) => {
+    if (req.user && req.user.type === "inventory_manager") {
+        next();
+    } else {
+        return res.status(403).json({ message: "Inventory manager access required" });
+    }
+};

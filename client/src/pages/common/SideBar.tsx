@@ -33,6 +33,8 @@ import {
     BadgeCheck,
     ClipboardClock,
     FileDown
+    ,
+    PackageSearch
 } from "lucide-react";
 
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -109,9 +111,19 @@ export default function AppSidebar({ dark, setDark }: SidebarProps) {
                 }
             ],
         },
+        "inventory_manager": {
+            label: "Inventory Manager",
+            items: [
+                {
+                    label: "Inventory Dashboard",
+                    to: "/inventorymanagerhome",
+                    icon: PackageSearch,
+                },
+            ],
+        },
     };
 
-    type SidebarType = keyof typeof sidebarConfig; // "car_owner" | "admin"
+    type SidebarType = keyof typeof sidebarConfig;
     const { name, type: decodedType, email } = decodeToken()!
     const sidebarType = decodedType as SidebarType;
 

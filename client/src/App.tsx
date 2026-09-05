@@ -23,6 +23,7 @@ import ManageUsers from './pages/admin/ManageUsers'
 import AuditLogs from './pages/admin/AuditLogs'
 import AdminMisc from './pages/admin/AdminMisc'
 import ViewCars from './pages/admin/ViewCars'
+import InventoryHome from './pages/inventory_manager/inventoryHome'
 
 // Aux
 import Layout from './pages/common/Layout';
@@ -79,6 +80,13 @@ function App() {
               <Route path="/auditlogs" element={<AuditLogs />} />
               <Route path="/history" element={<AdminMisc />} />
               <Route path="/viewcars" element={<ViewCars />} />
+            </Route>
+          </Route>
+
+          {/* Inventory Manager Routes */}
+          <Route element={<RequireRole role="inventory_manager" />}>
+            <Route element={<Layout dark={dark} setDark={setDark} />}>
+              <Route path="/inventorymanagerhome" element={<InventoryHome />} />
             </Route>
           </Route>
         </Route>
