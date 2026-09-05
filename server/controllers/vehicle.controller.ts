@@ -3,6 +3,7 @@ import { type AuthRequest } from "../middleware/authMiddleware.js";
 import vehicleRegistryModel from "../models/vehicleRegistryModel.js";
 import vehicleModel from "../models/vehicleModel.js";
 import type { Types } from "mongoose";
+import axios from "axios";
 
 export const addCar = async (req: AuthRequest, res: Response) => {
     try {
@@ -172,22 +173,90 @@ export const deleteCar = async (req: AuthRequest, res: Response) => {
     }
 };
 
-// export const updateCar = async (req: Request, res: Response) => {
-//   try {
-//     const { id } = req.params;
+export const getCarsSurvival = async (req: AuthRequest, res: Response) => {
+    try {
+        const registry = await vehicleRegistryModel.findOne({
+            owner: req.user._id,
+        });
+        if (!registry) {
+            return res.status(200).json({});
+        }
+        const vehicleIds = registry.vehicles;
 
-//     const updatedCar = await vehicleRegistryModel.findByIdAndUpdate(
-//       id,
-//       req.body,
-//       { returnDocument: 'after', runValidators: true }
-//     );
+        if (!vehicleIds || vehicleIds.length === 0) {
+            return res.status(200).json({});
+        }
 
-//     if (!updatedCar) {
-//       return res.status(404).json({ message: "Car not found" });
-//     }
+        const response = await axios.post(
+            `${process.env.ML_API_URL}/ml/survival`,
+            {
+                vehicle_ids: vehicleIds.map(
+                    (vehicleId) => String(vehicleId)
+                ),
+            }
+        );
 
-//     return res.status(200).json({message: "Car updated successfully", car: updatedCar});
-//   } catch (error) {
-//     res.status(500).json({ message: "Failed to update car" });
-//   }
-// };
+        // --------------------------------------------------
+        // Return predictions
+        // --------------------------------------------------
+
+        return res.status(200).json(
+            response.data
+        );
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Failed to fetch vehicle",
+        });
+    }
+}
+
+export const getCarsSurvivalTest = async (req: AuthRequest, res: Response) => {
+    try {
+        const registry = await vehicleRegistryModel.findOne({
+            owner: req.params._id as string,
+        });
+        if (!registry) {
+            return res.status(200).json({});
+        }
+        const vehicleIds = registry.vehicles;
+
+        if (!vehicleIds || vehicleIds.length === 0) {
+            return res.status(200).json({});
+        }
+
+        const response = await axios.post(
+            `${process.env.ML_API_URL}/ml/survival`,
+            {
+                vehicle_ids: vehicleIds.map(
+                    (vehicleId) => String(vehicleId)
+                ),
+            }
+        );
+
+        // --------------------------------------------------
+        // Return predictions
+        // --------------------------------------------------
+
+        return res.status(200).json(
+            response.data
+        );
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Failed to fetch vehicle",
+        });
+    }
+}
+
+export const getProjections = async (req: AuthRequest, res: Response) => {
+    try {
+        const result = await axios.get(`${process.env.ML_API_URL}/ml/projection`);
+        return res.status(200).json(result.data);
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({
+            message: "Failed to fetch projection",
+        });
+    }
+}

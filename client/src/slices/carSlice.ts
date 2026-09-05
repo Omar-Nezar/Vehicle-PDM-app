@@ -4,7 +4,8 @@ import {
     addCarRequest,
     getCarsRequest,
     getVehicleByVidRequest,
-    delCarRequest
+    delCarRequest,
+    getCarsSurvivalRequest,
 } from "./api/carApi";
 
 export interface Vehicle {
@@ -51,6 +52,19 @@ export const getUserCars = createAsyncThunk(
     }
 );
 
+export const getCarsSurvival = createAsyncThunk(
+    "vehicle/getCarsSurvival",
+    async (_, thunkAPI) => {
+        try {
+            return await getCarsSurvivalRequest();
+        } catch (err: any) {
+            return thunkAPI.rejectWithValue(
+                err.response?.data?.message || "Failed to fetch survival predictions"
+            );
+        }
+    }
+);
+
 
 // -----------------------------
 // Get one vehicle by VID
@@ -88,8 +102,10 @@ export const deleteCar = createAsyncThunk(
 
 interface VehicleState {
     cars: Vehicle[];
+    survival: unknown;
     selectedVehicle?: Vehicle
     loading: boolean;
+    survivalLoading: boolean;
     auxLoading: boolean;
     findLoading: boolean;
     error: string | null;
@@ -98,8 +114,10 @@ interface VehicleState {
 
 const initialState: VehicleState = {
     cars: [],
+    survival: {},
     selectedVehicle: undefined,
     loading: false,
+    survivalLoading: false,
     auxLoading: false,
     findLoading: false,
     error: null,
@@ -112,6 +130,7 @@ const vehicleSlice = createSlice({
     reducers: {
         resetVehicleState: (state) => {
             state.loading = false;
+            state.survivalLoading = false;
             state.auxLoading = false;
             state.findLoading = false;
             state.selectedVehicle = undefined;
@@ -167,6 +186,20 @@ const vehicleSlice = createSlice({
             .addCase(getUserCars.rejected, (state, action) => {
                 state.loading = false;
                 state.success = false;
+                state.error = action.payload as string;
+            });
+
+        builder
+            .addCase(getCarsSurvival.pending, (state) => {
+                state.survivalLoading = true;
+                state.error = null;
+            })
+            .addCase(getCarsSurvival.fulfilled, (state, action) => {
+                state.survivalLoading = false;
+                state.survival = action.payload;
+            })
+            .addCase(getCarsSurvival.rejected, (state, action) => {
+                state.survivalLoading = false;
                 state.error = action.payload as string;
             });
 

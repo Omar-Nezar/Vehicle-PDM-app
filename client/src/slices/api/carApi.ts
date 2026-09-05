@@ -11,6 +11,12 @@ export const getCarsRequest = async () => {
   return res.data
 }
 
+export const getCarsSurvivalRequest = async () => {
+  const res = await API.get("/car/getCarsSurvival")
+  console.log("[getCarsSurvivalRequest] Survival predictions received:", res.data)
+  return res.data
+}
+
 export const getVehicleByVidRequest = async (vid: string) => {
   const res = await API.get(`/car/getCarDetails/${vid}`)
   return res.data
